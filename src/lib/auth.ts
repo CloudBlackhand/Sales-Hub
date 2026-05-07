@@ -2,6 +2,31 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { db } from "@/lib/db";
 
+function resolveTrustedOrigins(): string[] {
+  const extra =
+    process.env.BETTER_AUTH_TRUSTED_ORIGINS?.split(",")
+      .map((s) => s.trim())
+      .filter(Boolean) ?? [];
+
+  const railway =
+    process.env.RAILWAY_PUBLIC_DOMAIN &&
+    `https://${process.env.RAILWAY_PUBLIC_DOMAIN}`;
+
+  const vercel =
+    process.env.VERCEL_URL && `https://${process.env.VERCEL_URL}`;
+
+  const candidates = [
+    ...extra,
+    process.env.BETTER_AUTH_URL,
+    process.env.NEXT_PUBLIC_APP_URL,
+    railway,
+    vercel,
+    "http://localhost:3000",
+  ].filter((x): x is string => Boolean(x));
+
+  return [...new Set(candidates)];
+}
+
 export const auth = betterAuth({
   database: prismaAdapter(db, {
     provider: "postgresql",
@@ -25,7 +50,7 @@ export const auth = betterAuth({
       // Future: add company context here
     },
   },
-  trustedOrigins: [process.env.BETTER_AUTH_URL ?? "http://localhost:3000"],
+  trustedOrigins: resolveTrustedOrigins(),
 });
 
 export type Session = typeof auth.$Infer.Session;
