@@ -16,7 +16,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { MemberRole } from "@/generated/prisma";
+import { MemberRole } from "@/lib/prisma-types";
 import { useState } from "react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 

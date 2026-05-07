@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { formatCurrency } from "@/lib/utils";
-import { Product, ProductType } from "@/generated/prisma";
+import { Product, ProductType } from "@/lib/prisma-types";
 import { type ProductInput } from "@/lib/schemas/products";
 import { getProducts, deleteProduct, updateProduct } from "@/server/actions/products";
 import { Plus, MoreHorizontal, Pencil, Archive } from "lucide-react";

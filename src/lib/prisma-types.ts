@@ -1,28 +1,32 @@
-// Safe for client-side: types/enums only (no Node.js runtime)
-export * from "./enums";
-export type * from "./models";
+/**
+ * Enums e tipos de modelo Prisma para uso em cliente/servidor.
+ * O barrel `@/generated/prisma` é apagado pelo `prisma generate`; mantemos este arquivo estável.
+ */
+export * from "@/generated/prisma/enums";
+export type * from "@/generated/prisma/models";
 
-// Convenience aliases: Prisma 7 exports models as XxxModel
 import type {
-  UserModel,
-  SessionModel,
   AccountModel,
-  CompanyModel,
-  CompanyMemberModel,
-  SellerModel,
-  ProductModel,
-  CustomerModel,
-  SaleModel,
-  SaleItemModel,
-  PostSaleActivityModel,
   CommissionModel,
-  FinancialTransactionModel,
+  CompanyMemberModel,
+  CompanyModel,
   CompanySettingsModel,
-} from "./models";
+  CustomerModel,
+  FinancialTransactionModel,
+  PostSaleActivityModel,
+  ProductModel,
+  SaleItemModel,
+  SaleModel,
+  SellerModel,
+  SessionModel,
+  UserModel,
+  VerificationModel,
+} from "@/generated/prisma/models";
 
 export type User = UserModel;
 export type Session = SessionModel;
 export type Account = AccountModel;
+export type Verification = VerificationModel;
 export type Company = CompanyModel;
 export type CompanyMember = CompanyMemberModel;
 export type Seller = SellerModel;

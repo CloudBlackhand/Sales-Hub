@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/db";
 import { ActionResult, PaginatedResult } from "@/types";
-import { FinancialTransaction, TransactionType } from "@/generated/prisma";
+import { FinancialTransaction, TransactionType } from "@/lib/prisma-types";
 import { transactionSchema, type TransactionInput } from "@/lib/schemas/financial";
 
 export async function getTransactions(

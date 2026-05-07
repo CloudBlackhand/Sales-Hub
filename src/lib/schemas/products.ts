@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { ProductType } from "@/generated/prisma";
+import { ProductType } from "@/lib/prisma-types";
 
 export const productSchema = z.object({
   name: z.string().min(2, "Nome obrigatório"),

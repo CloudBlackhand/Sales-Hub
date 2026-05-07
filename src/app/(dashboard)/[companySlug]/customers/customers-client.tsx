@@ -9,7 +9,7 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuTrigger, DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { Customer } from "@/generated/prisma";
+import { Customer } from "@/lib/prisma-types";
 import { getCustomers, deleteCustomer } from "@/server/actions/customers";
 import { Plus, MoreHorizontal, Pencil, Trash2, Mail, Phone } from "lucide-react";
 import { toast } from "sonner";

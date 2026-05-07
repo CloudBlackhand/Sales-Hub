@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/db";
 import { ActionResult, PaginatedResult } from "@/types";
-import { Product, ProductType } from "@/generated/prisma";
+import { Product, ProductType } from "@/lib/prisma-types";
 import { productSchema, type ProductInput } from "@/lib/schemas/products";
 
 export async function getProducts(

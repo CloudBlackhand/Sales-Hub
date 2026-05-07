@@ -3,7 +3,7 @@
 import { db } from "@/lib/db";
 import { slugify } from "@/lib/utils";
 import { ActionResult } from "@/types";
-import { Company, MemberRole } from "@/generated/prisma";
+import { Company, MemberRole } from "@/lib/prisma-types";
 import { createCompanySchema, type CreateCompanyInput } from "@/lib/schemas/company";
 
 export async function createCompany(

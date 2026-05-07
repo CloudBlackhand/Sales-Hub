@@ -5,7 +5,7 @@ import { useForm, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { customerSchema, type CustomerInput } from "@/lib/schemas/customers";
 import { createCustomer, updateCustomer } from "@/server/actions/customers";
-import { Customer } from "@/generated/prisma";
+import { Customer } from "@/lib/prisma-types";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

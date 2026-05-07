@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Seller, TransactionType, FinancialTransaction } from "@/generated/prisma";
+import { Seller, TransactionType, FinancialTransaction } from "@/lib/prisma-types";
 import { getTransactions, getCommissions, createTransaction, approveCommission, payCommission } from "@/server/actions/financial";
 import { Plus, MoreHorizontal, CheckCircle, DollarSign, TrendingUp, TrendingDown, AlertCircle } from "lucide-react";
 import { toast } from "sonner";

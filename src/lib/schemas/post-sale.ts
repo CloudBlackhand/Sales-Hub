@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { PostSaleType, ActivityStatus } from "@/generated/prisma";
+import { PostSaleType, ActivityStatus } from "@/lib/prisma-types";
 
 export const postSaleSchema = z.object({
   saleId: z.string().min(1),

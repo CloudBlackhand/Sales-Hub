@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { SaleType, SaleStatus } from "@/generated/prisma";
+import { SaleType, SaleStatus } from "@/lib/prisma-types";
 
 export const saleItemSchema = z.object({
   productId: z.string().optional().nullable(),

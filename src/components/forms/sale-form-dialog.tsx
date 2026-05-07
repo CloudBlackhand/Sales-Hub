@@ -7,7 +7,7 @@ import { saleSchema, type SaleInput } from "@/lib/schemas/sales";
 import { createSale } from "@/server/actions/sales";
 import { getProducts } from "@/server/actions/products";
 import { getCustomers } from "@/server/actions/customers";
-import { Seller, SaleType, SaleStatus } from "@/generated/prisma";
+import { Seller, SaleType, SaleStatus } from "@/lib/prisma-types";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";

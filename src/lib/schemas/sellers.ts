@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { CommissionType } from "@/generated/prisma";
+import { CommissionType } from "@/lib/prisma-types";
 
 export const sellerSchema = z.object({
   code: z.string().min(1, "Código obrigatório"),

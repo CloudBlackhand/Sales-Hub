@@ -11,7 +11,7 @@ export type {
   Commission,
   FinancialTransaction,
   CompanySettings,
-} from "@/generated/prisma";
+} from "@/lib/prisma-types";
 
 export {
   CompanyPlan,
@@ -24,7 +24,7 @@ export {
   PostSaleType,
   ActivityStatus,
   TransactionType,
-} from "@/generated/prisma";
+} from "@/lib/prisma-types";
 
 // ─── DTO types for server actions (portable to a future API) ───
 
@@ -53,5 +53,5 @@ export interface ActionResult<T = void> {
 export interface CompanyContext {
   companyId: string;
   userId: string;
-  role: import("@/generated/prisma").MemberRole;
+  role: import("@/lib/prisma-types").MemberRole;
 }

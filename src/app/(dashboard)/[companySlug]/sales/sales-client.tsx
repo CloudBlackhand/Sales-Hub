@@ -16,7 +16,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { formatCurrency, formatDate } from "@/lib/utils";
-import { Seller, SaleStatus } from "@/generated/prisma";
+import { Seller, SaleStatus } from "@/lib/prisma-types";
 import { getSales, updateSaleStatus } from "@/server/actions/sales";
 import { Plus, MoreHorizontal, Eye, CheckCircle, XCircle, Truck, ArrowUpDown } from "lucide-react";
 import { toast } from "sonner";

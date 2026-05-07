@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/db";
 import { ActionResult, PaginatedResult } from "@/types";
-import { PostSaleActivity, PostSaleType, ActivityStatus } from "@/generated/prisma";
+import { PostSaleActivity, PostSaleType, ActivityStatus } from "@/lib/prisma-types";
 import { postSaleSchema, type PostSaleInput } from "@/lib/schemas/post-sale";
 
 type ActivityWithRelations = PostSaleActivity & {

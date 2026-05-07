@@ -10,7 +10,7 @@ import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuTrigger, DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
-import { Seller, CommissionType } from "@/generated/prisma";
+import { Seller, CommissionType } from "@/lib/prisma-types";
 import { getSellers, toggleSellerStatus } from "@/server/actions/sellers";
 import { Plus, MoreHorizontal, Pencil, PowerOff } from "lucide-react";
 import { toast } from "sonner";

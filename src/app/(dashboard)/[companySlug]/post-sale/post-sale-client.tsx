@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Seller, ActivityStatus, PostSaleType } from "@/generated/prisma";
+import { Seller, ActivityStatus, PostSaleType } from "@/lib/prisma-types";
 import { getPostSaleActivities, updateActivityStatus } from "@/server/actions/post-sale";
 import { Plus, MoreHorizontal, CheckCircle, XCircle, Clock } from "lucide-react";
 import { toast } from "sonner";

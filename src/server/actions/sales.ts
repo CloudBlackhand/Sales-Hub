@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/db";
 import { ActionResult, PaginatedResult } from "@/types";
-import { Sale, SaleStatus, SaleType, CommissionType } from "@/generated/prisma";
+import { Sale, SaleStatus, SaleType, CommissionType } from "@/lib/prisma-types";
 import { saleSchema, type SaleInput } from "@/lib/schemas/sales";
 
 type SaleWithRelations = Sale & {

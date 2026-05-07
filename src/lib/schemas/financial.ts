@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { TransactionType } from "@/generated/prisma";
+import { TransactionType } from "@/lib/prisma-types";
 
 export const transactionSchema = z.object({
   type: z.nativeEnum(TransactionType),
