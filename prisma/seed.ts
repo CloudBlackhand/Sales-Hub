@@ -20,69 +20,115 @@ const DEMO_EMAIL = "admin@saleshub.demo";
 const DEMO_PASSWORD = "admin";
 const COMPANY_SLUG = "empresa-demo";
 
-async function main() {
-  if (!process.env.DATABASE_URL) {
-    throw new Error("DATABASE_URL não definido");
+/**
+ * Migrações Prisma (`prisma migrate`) só criam/atualizam o **schema** (tabelas).
+ * Este script é o **seed** (`prisma db seed`): cria o login demo e a empresa fictícia.
+ *
+ * Better Auth (email/senha) espera uma linha em `account` com:
+ * `providerId: "credential"` e `accountId` igual ao **id do usuário** (ver fluxo interno do pacote).
+ */
+async function ensureDemoUserAndCredential(
+  prisma: PrismaClient,
+  passwordHash: string
+): Promise<{ id: string; email: string; name: string }> {
+  let user = await prisma.user.findUnique({ where: { email: DEMO_EMAIL } });
+
+  if (!user) {
+    user = await prisma.user.create({
+      data: {
+        name: "Administrador Demo",
+        email: DEMO_EMAIL,
+        emailVerified: true,
+      },
+    });
+    console.log("[seed] Usuário demo criado:", DEMO_EMAIL);
+  } else {
+    console.log("[seed] Usuário demo já existe; garantindo conta credential e senha.");
   }
 
-  const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-  const adapter = new PrismaPg(pool);
-  const prisma = new PrismaClient({ adapter });
+  const credential = await prisma.account.findFirst({
+    where: { userId: user.id, providerId: "credential" },
+  });
 
-  const existing = await prisma.user.findUnique({ where: { email: DEMO_EMAIL } });
-  if (existing) {
-    console.log(`Seed ignorado: usuário demo já existe (${DEMO_EMAIL}).`);
-    await prisma.$disconnect();
-    await pool.end();
+  if (!credential) {
+    await prisma.account.create({
+      data: {
+        accountId: user.id,
+        providerId: "credential",
+        userId: user.id,
+        password: passwordHash,
+      },
+    });
+    console.log("[seed] Registro em `account` (credential) criado.");
+  } else {
+    await prisma.account.update({
+      where: { id: credential.id },
+      data: {
+        accountId: user.id,
+        password: passwordHash,
+      },
+    });
+    console.log("[seed] Conta credential atualizada (senha demo admin/admin + accountId).");
+  }
+
+  return user;
+}
+
+async function seedDemoCompanyAndSampleData(
+  prisma: PrismaClient,
+  userId: string
+): Promise<void> {
+  let company = await prisma.company.findUnique({ where: { slug: COMPANY_SLUG } });
+
+  if (!company) {
+    company = await prisma.company.create({
+      data: {
+        name: "Empresa Demonstração",
+        slug: COMPANY_SLUG,
+        plan: CompanyPlan.PRO,
+        onboarded: true,
+        email: "contato@empresa-demo.local",
+        phone: "(11) 99999-0000",
+      },
+    });
+    console.log("[seed] Empresa fictícia criada:", COMPANY_SLUG);
+  } else {
+    console.log("[seed] Empresa demo já existe:", COMPANY_SLUG);
+  }
+
+  const membership = await prisma.companyMember.findUnique({
+    where: { userId_companyId: { userId, companyId: company.id } },
+  });
+  if (!membership) {
+    await prisma.companyMember.create({
+      data: {
+        userId,
+        companyId: company.id,
+        role: MemberRole.OWNER,
+      },
+    });
+    console.log("[seed] Usuário demo vinculado como OWNER da empresa.");
+  }
+
+  const settings = await prisma.companySettings.findUnique({
+    where: { companyId: company.id },
+  });
+  if (!settings) {
+    await prisma.companySettings.create({
+      data: {
+        companyId: company.id,
+        commissionDefaultType: CommissionType.PERCENTAGE,
+        commissionDefaultValue: new Prisma.Decimal("5"),
+        currency: "BRL",
+      },
+    });
+  }
+
+  const sellerCount = await prisma.seller.count({ where: { companyId: company.id } });
+  if (sellerCount > 0) {
+    console.log("[seed] Dados de exemplo (vendedores/produtos/vendas) já presentes — pulando.");
     return;
   }
-
-  const passwordHash = await hashPassword(DEMO_PASSWORD);
-
-  const user = await prisma.user.create({
-    data: {
-      name: "Administrador Demo",
-      email: DEMO_EMAIL,
-      emailVerified: true,
-    },
-  });
-
-  await prisma.account.create({
-    data: {
-      accountId: user.id,
-      providerId: "credential",
-      userId: user.id,
-      password: passwordHash,
-    },
-  });
-
-  const company = await prisma.company.create({
-    data: {
-      name: "Empresa Demonstração",
-      slug: COMPANY_SLUG,
-      plan: CompanyPlan.PRO,
-      onboarded: true,
-      email: "contato@empresa-demo.local",
-      phone: "(11) 99999-0000",
-    },
-  });
-
-  await prisma.companyMember.create({
-    data: {
-      userId: user.id,
-      companyId: company.id,
-      role: MemberRole.OWNER,
-    },
-  });
-
-  await prisma.companySettings.create({
-    data: {
-      companyId: company.id,
-      commissionDefaultType: CommissionType.PERCENTAGE,
-      commissionDefaultValue: new Prisma.Decimal("5"),
-      currency: "BRL",
-    },
-  });
 
   const sellerA = await prisma.seller.create({
     data: {
@@ -273,6 +319,24 @@ async function main() {
       date: new Date(),
     },
   });
+
+  console.log("[seed] Catálogo, vendas e financeiro de exemplo inseridos.");
+}
+
+async function main() {
+  if (!process.env.DATABASE_URL) {
+    throw new Error("DATABASE_URL não definido");
+  }
+
+  const pool = new Pool({ connectionString: process.env.DATABASE_URL });
+  const adapter = new PrismaPg(pool);
+  const prisma = new PrismaClient({ adapter });
+
+  console.log("[seed] Lembrete: migrations não criam usuários — apenas este seed insere o demo.");
+
+  const passwordHash = await hashPassword(DEMO_PASSWORD);
+  const user = await ensureDemoUserAndCredential(prisma, passwordHash);
+  await seedDemoCompanyAndSampleData(prisma, user.id);
 
   console.log("Seed concluído:");
   console.log(`  Usuário: ${DEMO_EMAIL} / ${DEMO_PASSWORD}`);
