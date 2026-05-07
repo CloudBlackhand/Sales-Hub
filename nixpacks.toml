@@ -5,4 +5,4 @@ NIXPACKS_NODE_VERSION = "22"
 # O CMD da imagem vem daqui; sem isso o Nixpacks usa um start sem HOSTNAME=0.0.0.0 e o healthcheck da Railway falha (503).
 # O server.js standalone faz: hostname = process.env.HOSTNAME || "0.0.0.0" — no Docker, HOSTNAME é o ID do container.
 [start]
-cmd = "/bin/sh -c 'set -e; npx prisma migrate deploy; exec env HOSTNAME=0.0.0.0 node .next/standalone/server.js'"
+cmd = "/bin/sh -c 'set -e; npx prisma migrate deploy; npx prisma db seed; exec env HOSTNAME=0.0.0.0 node .next/standalone/server.js'"

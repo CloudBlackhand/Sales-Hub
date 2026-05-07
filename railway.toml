@@ -4,7 +4,8 @@ buildCommand = "npm run build"
 
 [deploy]
 # Mesmo comando que nixpacks.toml [start] (Railway pode usar este valor no runtime).
-startCommand = "/bin/sh -c 'set -e; npx prisma migrate deploy; exec env HOSTNAME=0.0.0.0 node .next/standalone/server.js'"
+# Migrações criam só o schema; o usuário demo (admin@saleshub.demo / admin) vem do seed — precisa rodar na primeira vez (seed é idempotente).
+startCommand = "/bin/sh -c 'set -e; npx prisma migrate deploy; npx prisma db seed; exec env HOSTNAME=0.0.0.0 node .next/standalone/server.js'"
 healthcheckPath = "/api/health"
 healthcheckTimeout = 300
 restartPolicyType = "on_failure"
