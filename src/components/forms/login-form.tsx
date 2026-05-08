@@ -41,20 +41,29 @@ export function LoginForm() {
     }
     setLoading(true);
     try {
-      await signIn.email({
+      const res = await signIn.email({
         email,
         password: values.password,
         callbackURL: callbackUrl,
-        fetchOptions: {
-          onSuccess: () => router.push(callbackUrl),
-          onError: (ctx) => {
-            toast.error(ctx.error.message ?? "Credenciais inválidas");
-            setLoading(false);
-          },
-        },
       });
-    } catch {
-      toast.error("Erro ao fazer login");
+
+      if (res && typeof res === "object" && "error" in res && res.error) {
+        const err = res.error as { message?: string; status?: number; code?: string };
+        const hint401 =
+          "Conta/senha inválidos ou utilizador demo não existe nesta base. Confirme admin/admin, redeploy com seed, e que DATABASE_URL aponta ao Postgres certo.";
+        const msg =
+          (typeof err.message === "string" && err.message.trim()) ||
+          (err.status === 401 ? hint401 : undefined) ||
+          (typeof err.code === "string" ? err.code : undefined) ||
+          "Não foi possível entrar.";
+        toast.error(msg);
+        return;
+      }
+
+      router.push(callbackUrl);
+    } catch (e) {
+      toast.error(e instanceof Error ? e.message : "Erro ao fazer login");
+    } finally {
       setLoading(false);
     }
   }
