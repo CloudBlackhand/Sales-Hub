@@ -2,16 +2,13 @@
 
 import { db } from "@/lib/db";
 import { ActionResult } from "@/types";
-import { z } from "zod";
+import {
+  companySettingsSchema,
+  type CompanySettingsInput,
+} from "@/lib/schemas/company-settings";
 
-export const companySettingsSchema = z.object({
-  name: z.string().min(2),
-  cnpj: z.string().optional(),
-  phone: z.string().optional(),
-  email: z.string().email().optional().or(z.literal("")),
-});
-
-export type CompanySettingsInput = z.infer<typeof companySettingsSchema>;
+export type { CompanySettingsInput };
+export { companySettingsSchema };
 
 export async function updateCompanyInfo(
   companyId: string,

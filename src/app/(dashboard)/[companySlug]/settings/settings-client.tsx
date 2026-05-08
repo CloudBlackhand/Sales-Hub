@@ -3,7 +3,8 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { companySettingsSchema, CompanySettingsInput, updateCompanyInfo } from "@/server/actions/settings";
+import { companySettingsSchema, type CompanySettingsInput } from "@/lib/schemas/company-settings";
+import { updateCompanyInfo } from "@/server/actions/settings";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";

@@ -22,5 +22,19 @@ export default async function SettingsPage({ params }: Props) {
   });
   if (!company) redirect("/onboarding");
 
-  return <SettingsClient company={company} settings={company.settings} />;
+  const settingsPayload = company.settings
+    ? { id: company.settings.id, currency: company.settings.currency }
+    : null;
+
+  const companyPayload = {
+    id: company.id,
+    name: company.name,
+    slug: company.slug,
+    cnpj: company.cnpj,
+    phone: company.phone,
+    email: company.email,
+    plan: company.plan,
+  };
+
+  return <SettingsClient company={companyPayload} settings={settingsPayload} />;
 }
