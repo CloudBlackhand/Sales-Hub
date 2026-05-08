@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { formatChartDayMonth, formatDate } from "@/lib/utils";
 import { getFinancialSummary } from "@/server/actions/financial";
 import { OverviewClient } from "./overview-client";
 
@@ -82,12 +83,12 @@ export default async function OverviewPage({ params }: Props) {
         type: s.type,
         status: s.status,
         totalAmount: Number(s.totalAmount),
-        saleDate: s.saleDate.toISOString(),
+        saleDateLabel: formatDate(s.saleDate),
         sellerName: s.seller.name,
         customerName: s.customer?.name ?? null,
       }))}
       chartData={chartData.map((d) => ({
-        date: d.date.toLocaleDateString("pt-BR", { day: "2-digit", month: "2-digit" }),
+        date: formatChartDayMonth(d.date),
         amount: Number(d._sum.amount ?? 0),
       }))}
       companySlug={companySlug}

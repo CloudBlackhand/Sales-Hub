@@ -16,18 +16,35 @@ export function formatCurrency(
   }).format(num);
 }
 
+/** Fuso usado em datas de negócio para SSR e browser gerarem o mesmo texto (evita React #418). */
+export const APP_TIMEZONE = "America/Sao_Paulo";
+
 export function formatDate(date: Date | string, options?: Intl.DateTimeFormatOptions): string {
   const d = typeof date === "string" ? new Date(date) : date;
-  return new Intl.DateTimeFormat("pt-BR", options ?? {
+  return new Intl.DateTimeFormat("pt-BR", {
+    timeZone: APP_TIMEZONE,
+    ...(options ?? {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+    }),
+  }).format(d);
+}
+
+/** Dia/mês para eixos de gráfico (mesmo resultado no Node Railway e no browser). */
+export function formatChartDayMonth(date: Date | string): string {
+  const d = typeof date === "string" ? new Date(date) : date;
+  return new Intl.DateTimeFormat("pt-BR", {
+    timeZone: APP_TIMEZONE,
     day: "2-digit",
     month: "2-digit",
-    year: "numeric",
   }).format(d);
 }
 
 export function formatDateTime(date: Date | string): string {
   const d = typeof date === "string" ? new Date(date) : date;
   return new Intl.DateTimeFormat("pt-BR", {
+    timeZone: APP_TIMEZONE,
     day: "2-digit",
     month: "2-digit",
     year: "numeric",
