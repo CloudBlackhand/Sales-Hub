@@ -1,8 +1,10 @@
+import { IdentifyComponent } from "@openpanel/nextjs";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { isPlatformAdmin } from "@/lib/platform-admin";
+import { OpenPanelCompanyGroup } from "@/components/analytics/open-panel-company-group";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
 
@@ -33,8 +35,33 @@ export default async function DashboardLayout({ children, params }: DashboardLay
   const companies = allMemberships.map((m) => m.company);
   const showSupervise = isPlatformAdmin(session.user.email);
 
+  const openPanelClientId = process.env.NEXT_PUBLIC_OPENPANEL_CLIENT_ID;
+  const displayName = session.user.name?.trim() ?? "";
+  const [firstName, ...rest] = displayName.split(/\s+/);
+  const lastName = rest.join(" ") || undefined;
+
   return (
     <div className="flex h-screen bg-gray-950 overflow-hidden">
+      {openPanelClientId ? (
+        <>
+          <IdentifyComponent
+            profileId={session.user.id}
+            firstName={firstName || undefined}
+            lastName={lastName}
+            email={session.user.email}
+            properties={{
+              company_id: company.id,
+              company_slug: companySlug,
+              company_name: company.name,
+            }}
+          />
+          <OpenPanelCompanyGroup
+            companyId={company.id}
+            companyName={company.name}
+            companySlug={companySlug}
+          />
+        </>
+      ) : null}
       <Sidebar companySlug={companySlug} role={membership.role} />
       <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
         <Header
