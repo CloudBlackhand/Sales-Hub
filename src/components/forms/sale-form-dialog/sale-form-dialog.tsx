@@ -8,7 +8,6 @@ import { createSale } from "@/server/actions/sales";
 import { SaleType, SaleStatus } from "@/lib/prisma-types";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Separator } from "@/components/ui/separator";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import { toast } from "sonner";
 import type { SaleFormDialogProps } from "./types";
 import { SaleFormMainFields } from "./main-fields";
@@ -65,7 +64,8 @@ export function SaleFormDialog({ open, onClose, companyId, sellers, onSuccess }:
           <DialogTitle className="text-lg text-white">Nova venda</DialogTitle>
         </DialogHeader>
 
-        <ScrollArea className="min-h-0 flex-1">
+        {/* Rolagem nativa: ScrollArea (Base UI) esconde a barra; precisamos da barra visível no tema global */}
+        <div className="min-h-0 flex-1 overflow-x-hidden overflow-y-auto overscroll-contain [scrollbar-gutter:stable]">
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 px-6 py-4 pb-6">
             <SaleFormMainFields form={form} sellers={sellers} />
             <Separator className="bg-gray-800" />
@@ -74,7 +74,7 @@ export function SaleFormDialog({ open, onClose, companyId, sellers, onSuccess }:
             <SaleFormNotesAndTotals form={form} subtotal={subtotal} total={total} />
             <SaleFormActions loading={loading} onCancel={onClose} />
           </form>
-        </ScrollArea>
+        </div>
       </DialogContent>
     </Dialog>
   );
