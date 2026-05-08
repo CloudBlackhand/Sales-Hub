@@ -26,6 +26,8 @@ interface NavItem {
   href: string;
   icon: React.ElementType;
   roles?: MemberRole[];
+  /** Só mostra quando o dashboard OpenPanel está configurado (iframe interno). */
+  requiresOpenPanelUrl?: boolean;
 }
 
 const navItems: NavItem[] = [
@@ -36,6 +38,13 @@ const navItems: NavItem[] = [
   { label: "Vendedores", href: "sellers", icon: UserCheck, roles: [MemberRole.OWNER, MemberRole.ADMIN, MemberRole.MANAGER] },
   { label: "Pós-Venda", href: "post-sale", icon: MessageSquare },
   { label: "Financeiro", href: "financial", icon: DollarSign, roles: [MemberRole.OWNER, MemberRole.ADMIN] },
+  {
+    label: "Analytics",
+    href: "analytics",
+    icon: BarChart3,
+    roles: [MemberRole.OWNER, MemberRole.ADMIN],
+    requiresOpenPanelUrl: true,
+  },
   { label: "Configurações", href: "settings", icon: Settings, roles: [MemberRole.OWNER, MemberRole.ADMIN] },
 ];
 
@@ -53,9 +62,11 @@ export function Sidebar({ companySlug, role }: SidebarProps) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
 
-  const visibleItems = navItems.filter(
-    (item) => !item.roles || item.roles.includes(role)
-  );
+  const visibleItems = navItems.filter((item) => {
+    if (item.requiresOpenPanelUrl && !openPanelDashboardUrl) return false;
+    if (item.roles && !item.roles.includes(role)) return false;
+    return true;
+  });
 
   return (
     <TooltipProvider>
@@ -123,39 +134,6 @@ export function Sidebar({ companySlug, role }: SidebarProps) {
                 </li>
               );
             })}
-            {openPanelDashboardUrl &&
-            (role === MemberRole.OWNER || role === MemberRole.ADMIN) ? (
-              <li className="mt-2 pt-2 border-t border-gray-800">
-                {collapsed ? (
-                  <Tooltip>
-                    <TooltipTrigger
-                      className="flex items-center justify-center h-10 w-10 mx-auto rounded-lg transition-colors text-gray-400 hover:text-white hover:bg-gray-800"
-                    >
-                      <a
-                        href={openPanelDashboardUrl}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="flex items-center justify-center w-full h-full"
-                        aria-label="Analytics (OpenPanel)"
-                      >
-                        <BarChart3 className="w-5 h-5" />
-                      </a>
-                    </TooltipTrigger>
-                    <TooltipContent side="right">Analytics (OpenPanel)</TooltipContent>
-                  </Tooltip>
-                ) : (
-                  <a
-                    href={openPanelDashboardUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="flex items-center gap-3 h-10 px-3 rounded-lg transition-colors text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800"
-                  >
-                    <BarChart3 className="w-4 h-4 flex-shrink-0" />
-                    <span className="truncate">Analytics</span>
-                  </a>
-                )}
-              </li>
-            ) : null}
           </ul>
         </nav>
 
