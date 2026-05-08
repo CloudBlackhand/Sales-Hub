@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
-import { OpenPanelComponent } from "@openpanel/nextjs";
+import { OpenPanelScripts } from "@/components/openpanel/open-panel-scripts";
 import { Toaster } from "@/components/ui/sonner";
 import { Providers } from "@/components/providers";
 import "./globals.css";
@@ -33,7 +33,7 @@ export default function RootLayout({
     <html lang="pt-BR" suppressHydrationWarning>
       <body className={inter.className}>
         {openPanelClientId ? (
-          <OpenPanelComponent
+          <OpenPanelScripts
             clientId={openPanelClientId}
             trackScreenViews
             trackOutgoingLinks={false}

@@ -1,4 +1,4 @@
-import { IdentifyComponent } from "@openpanel/nextjs";
+import { IdentifyOpenPanel } from "@/components/openpanel/open-panel-scripts";
 import { redirect } from "next/navigation";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
@@ -42,7 +42,7 @@ export default async function DashboardLayout({ children, params }: DashboardLay
   return (
     <div className="flex h-screen overflow-hidden bg-black">
       {openPanelClientId ? (
-        <IdentifyComponent
+        <IdentifyOpenPanel
           profileId={session.user.id}
           firstName={firstName || undefined}
           lastName={lastName}
