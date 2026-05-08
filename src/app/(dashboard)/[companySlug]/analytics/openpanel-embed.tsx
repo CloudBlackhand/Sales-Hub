@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { ExternalLink } from "lucide-react";
+import { ExternalLink, HelpCircle } from "lucide-react";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 
 type Props = {
   dashboardUrl: string;
@@ -16,46 +17,63 @@ export function OpenPanelEmbed({ dashboardUrl }: Props) {
   }, [dashboardUrl]);
 
   return (
-    <div className="flex flex-col gap-3 h-[calc(100dvh-4rem)] min-h-[480px] min-w-0">
-      <div className="flex flex-wrap items-center justify-between gap-2 shrink-0 px-1">
-        <p className="text-sm text-gray-400">
-          Dashboard OpenPanel (mesma UI que no{" "}
+    <TooltipProvider delay={200}>
+      <div className="flex min-h-0 flex-1 flex-col bg-black">
+        {/* Barra superior — mesmo “feel” escuro do OpenPanel: preto, tipografia nítida */}
+        <header className="flex h-11 shrink-0 items-center justify-between gap-3 border-b border-zinc-900 bg-black px-4">
+          <div className="flex min-w-0 items-center gap-2">
+            <span className="text-sm font-semibold tracking-tight text-zinc-100">OpenPanel</span>
+            <span className="hidden text-xs text-zinc-600 sm:inline">·</span>
+            <span className="hidden truncate text-xs text-zinc-500 sm:inline">
+              Analytics em tempo real
+            </span>
+            <Tooltip>
+              <TooltipTrigger
+                type="button"
+                className="ml-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-zinc-500 transition-colors hover:bg-zinc-900 hover:text-zinc-300"
+                aria-label="Informação sobre este painel"
+              >
+                <HelpCircle className="h-4 w-4" />
+              </TooltipTrigger>
+              <TooltipContent
+                side="bottom"
+                align="start"
+                className="max-w-xs border-zinc-800 bg-zinc-950 text-zinc-300"
+              >
+                O mesmo dashboard do projeto OpenPanel (funis, eventos, receita). A Visão Geral do CRM
+                continua em <span className="text-zinc-100">Visão Geral</span>.
+              </TooltipContent>
+            </Tooltip>
+          </div>
           <a
-            href="https://demo.openpanel.dev/demo/shoey"
-            className="text-blue-400 hover:underline"
+            href={dashboardUrl}
             target="_blank"
             rel="noopener noreferrer"
+            className="inline-flex h-8 shrink-0 items-center gap-2 rounded-md border border-zinc-800 bg-zinc-950 px-3 text-xs font-medium tracking-wide text-zinc-300 transition-colors hover:border-zinc-700 hover:bg-zinc-900 hover:text-white"
           >
-            demo oficial
+            <ExternalLink className="h-3.5 w-3.5 opacity-80" />
+            Abrir externo
           </a>
-          ). Os gráficos vivem neste painel, não na Visão Geral do CRM.
-        </p>
-        <a
-          href={dashboardUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex h-7 items-center gap-1.5 rounded-lg border border-gray-600 bg-transparent px-2.5 text-[0.8rem] font-medium text-gray-200 hover:bg-gray-800"
-        >
-          <ExternalLink className="w-4 h-4" />
-          Abrir em nova janela
-        </a>
+        </header>
+
+        {/* Iframe em ecrã cheio na área de conteúdo — sem moldura cinzenta */}
+        <div className="relative min-h-0 flex-1 bg-black">
+          <iframe
+            title="OpenPanel"
+            src={dashboardUrl}
+            className="absolute inset-0 h-full w-full border-0 bg-black"
+            referrerPolicy="strict-origin-when-cross-origin"
+          />
+          {blockedHint ? (
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 border-t border-zinc-900 bg-zinc-950/95 px-4 py-2.5 text-center text-[11px] leading-relaxed text-zinc-500">
+              Ecrã em branco? O teu OpenPanel pode bloquear iframes (
+              <code className="text-zinc-400">frame-ancestors</code>
+              ). Usa <span className="text-zinc-400">Abrir externo</span> ou permite o domínio do Sales Hub no
+              self-host.
+            </div>
+          ) : null}
+        </div>
       </div>
-      <div className="relative flex-1 min-h-0 rounded-lg border border-gray-800 bg-gray-900 overflow-hidden">
-        <iframe
-          title="OpenPanel"
-          src={dashboardUrl}
-          className="absolute inset-0 h-full w-full border-0 bg-gray-950"
-          referrerPolicy="strict-origin-when-cross-origin"
-        />
-        {blockedHint ? (
-          <div className="absolute bottom-0 left-0 right-0 bg-gray-950/95 border-t border-gray-800 px-3 py-2 text-xs text-gray-400">
-            Se o ecrã ficar em branco, o teu OpenPanel pode estar a bloquear iframes (
-            <code className="text-gray-300">Content-Security-Policy: frame-ancestors</code>
-            ). Nesse caso usa &quot;Abrir em nova janela&quot; ou self-host com{" "}
-            <code className="text-gray-300">frame-ancestors</code> a incluir o domínio do Sales Hub.
-          </div>
-        ) : null}
-      </div>
-    </div>
+    </TooltipProvider>
   );
 }

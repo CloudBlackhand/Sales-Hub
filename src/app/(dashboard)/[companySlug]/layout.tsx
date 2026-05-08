@@ -40,7 +40,7 @@ export default async function DashboardLayout({ children, params }: DashboardLay
   const lastName = rest.join(" ") || undefined;
 
   return (
-    <div className="flex h-screen bg-gray-950 overflow-hidden">
+    <div className="flex h-screen overflow-hidden bg-black">
       {openPanelClientId ? (
         <IdentifyComponent
           profileId={session.user.id}
@@ -62,7 +62,7 @@ export default async function DashboardLayout({ children, params }: DashboardLay
           companies={companies}
           showSupervise={showSupervise}
         />
-        <main className="flex-1 overflow-y-auto bg-gray-950">
+        <main className="flex min-h-0 flex-1 flex-col overflow-y-auto overflow-x-hidden bg-black">
           {children}
         </main>
       </div>

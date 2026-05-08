@@ -72,12 +72,12 @@ export function Sidebar({ companySlug, role }: SidebarProps) {
     <TooltipProvider>
       <aside
         className={cn(
-          "relative flex flex-col bg-gray-900 border-r border-gray-800 transition-all duration-300",
+          "relative flex flex-col border-r border-zinc-900 bg-black transition-all duration-300",
           collapsed ? "w-16" : "w-60"
         )}
       >
         <div className={cn(
-          "flex items-center border-b border-gray-800 h-16 px-4",
+          "flex items-center border-b border-zinc-900 h-16 px-4",
           collapsed ? "justify-center" : "gap-3"
         )}>
           <div className="w-8 h-8 rounded-lg bg-blue-600 flex items-center justify-center flex-shrink-0">
@@ -106,7 +106,7 @@ export function Sidebar({ companySlug, role }: SidebarProps) {
                           "flex items-center justify-center h-10 w-10 mx-auto rounded-lg transition-colors",
                           isActive
                             ? "bg-blue-600 text-white"
-                            : "text-gray-400 hover:text-white hover:bg-gray-800"
+                            : "text-zinc-500 hover:text-white hover:bg-zinc-900/90"
                         )}
                       >
                         <Link href={href} className="flex items-center justify-center w-full h-full">
@@ -124,7 +124,7 @@ export function Sidebar({ companySlug, role }: SidebarProps) {
                         "flex items-center gap-3 h-10 px-3 rounded-lg transition-colors text-sm font-medium",
                         isActive
                           ? "bg-blue-600 text-white"
-                          : "text-gray-400 hover:text-white hover:bg-gray-800"
+                          : "text-zinc-500 hover:text-white hover:bg-zinc-900/90"
                       )}
                     >
                       <Icon className="w-4 h-4 flex-shrink-0" />
@@ -139,7 +139,7 @@ export function Sidebar({ companySlug, role }: SidebarProps) {
 
         <button
           onClick={() => setCollapsed(!collapsed)}
-          className="absolute -right-3 top-20 w-6 h-6 rounded-full bg-gray-700 border border-gray-600 flex items-center justify-center text-gray-300 hover:text-white hover:bg-gray-600 transition-colors z-10"
+          className="absolute -right-3 top-20 z-10 flex h-6 w-6 items-center justify-center rounded-full border border-zinc-700 bg-zinc-900 text-zinc-400 transition-colors hover:bg-zinc-800 hover:text-white"
         >
           {collapsed ? <ChevronRight className="w-3 h-3" /> : <ChevronLeft className="w-3 h-3" />}
         </button>

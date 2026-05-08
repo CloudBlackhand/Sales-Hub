@@ -33,31 +33,36 @@ export default async function AnalyticsPage({ params }: Props) {
 
   if (!dashboardUrl) {
     return (
-      <div className="p-6 max-w-xl">
-        <h1 className="text-xl font-semibold text-white mb-2">Analytics (OpenPanel)</h1>
-        <p className="text-gray-400 text-sm mb-4">
-          Define <code className="text-amber-200/90">NEXT_PUBLIC_OPENPANEL_DASHBOARD_URL</code> no ambiente
-          (Railway / <code className="text-amber-200/90">.env</code>) com o URL do teu projeto OpenPanel — por
-          exemplo o caminho do workspace no dashboard (cloud ou self-host).
-        </p>
-        <p className="text-gray-500 text-xs">
-          O monorepo{" "}
-          <a
-            href="https://github.com/Openpanel-dev/openpanel"
-            className="text-blue-400 hover:underline"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Openpanel-dev/openpanel
-          </a>{" "}
-          é a stack completa de analytics; aqui apenas incorporamos essa UI.
-        </p>
+      <div className="flex min-h-0 flex-1 flex-col items-center justify-center bg-black px-4 py-12">
+        <div className="w-full max-w-md rounded-xl border border-zinc-800/90 bg-zinc-950/90 px-8 py-10 text-center shadow-[0_0_0_1px_rgba(24,24,27,0.5)]">
+          <p className="text-xs font-medium uppercase tracking-[0.2em] text-zinc-500">OpenPanel</p>
+          <h1 className="mt-3 text-lg font-semibold tracking-tight text-zinc-100">Analytics não configurado</h1>
+          <p className="mt-3 text-sm leading-relaxed text-zinc-500">
+            Define{" "}
+            <code className="rounded bg-zinc-900 px-1.5 py-0.5 font-mono text-[0.8rem] text-amber-200/90">
+              NEXT_PUBLIC_OPENPANEL_DASHBOARD_URL
+            </code>{" "}
+            no Railway ou no <code className="font-mono text-zinc-400">.env</code> com o URL do projeto no
+            dashboard OpenPanel.
+          </p>
+          <p className="mt-6 text-xs leading-relaxed text-zinc-600">
+            Stack de referência:{" "}
+            <a
+              href="https://github.com/Openpanel-dev/openpanel"
+              className="text-zinc-400 underline-offset-2 hover:text-white hover:underline"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Openpanel-dev/openpanel
+            </a>
+          </p>
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="p-4 md:p-6 h-full min-h-0">
+    <div className="flex min-h-0 flex-1 flex-col">
       <OpenPanelEmbed dashboardUrl={dashboardUrl} />
     </div>
   );

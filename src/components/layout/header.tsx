@@ -48,20 +48,20 @@ export function Header({ user, company, companies, showSupervise }: HeaderProps)
   };
 
   return (
-    <header className="flex items-center justify-between h-16 px-6 bg-gray-900 border-b border-gray-800 flex-shrink-0">
+    <header className="flex h-16 shrink-0 items-center justify-between border-b border-zinc-900 bg-black px-6">
       {/* Company switcher */}
       <DropdownMenu>
         <DropdownMenuTrigger
-          className="flex items-center gap-3 h-10 px-3 rounded-lg text-gray-200 hover:bg-gray-800 hover:text-white transition-colors text-sm font-medium"
+          className="flex h-10 items-center gap-3 rounded-lg px-3 text-sm font-medium text-zinc-200 transition-colors hover:bg-zinc-900 hover:text-white"
         >
           <div className="w-7 h-7 rounded bg-blue-600 flex items-center justify-center flex-shrink-0">
             <Building2 className="w-4 h-4 text-white" />
           </div>
           <div className="text-left hidden sm:block">
             <p className="text-sm font-medium leading-none truncate max-w-[160px]">{company.name}</p>
-            <p className="text-xs text-gray-400 mt-0.5 capitalize">{company.plan.toLowerCase()}</p>
+            <p className="mt-0.5 text-xs capitalize text-zinc-500">{company.plan.toLowerCase()}</p>
           </div>
-          <ChevronsUpDown className="w-4 h-4 text-gray-400 ml-1" />
+          <ChevronsUpDown className="ml-1 h-4 w-4 text-zinc-500" />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" className="w-64 bg-gray-800 border-gray-700">
           <DropdownMenuLabel className="text-gray-400 text-xs uppercase tracking-wider px-2">
