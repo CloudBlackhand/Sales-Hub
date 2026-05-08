@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
 import { getProducts } from "@/server/actions/products";
 import { ProductsClient } from "./products-client";
+import { requireDashboardContext } from "@/server/dashboard/context";
 
 export const metadata: Metadata = { title: "Produtos" };
 
@@ -16,11 +13,7 @@ interface Props {
 export default async function ProductsPage({ params, searchParams }: Props) {
   const { companySlug } = await params;
   const sp = await searchParams;
-  const session = await auth.api.getSession({ headers: await headers() });
-  if (!session) redirect("/login");
-
-  const company = await db.company.findUnique({ where: { slug: companySlug } });
-  if (!company) redirect("/onboarding");
+  const { company } = await requireDashboardContext(companySlug);
 
   const result = await getProducts(company.id, {
     page: sp.page ? parseInt(sp.page) : 1,
@@ -28,5 +21,5 @@ export default async function ProductsPage({ params, searchParams }: Props) {
     type: sp.type as never,
   });
 
-  return <ProductsClient companyId={company.id} initialProducts={result} />;
+  return <ProductsClient companyId={company.id} companySlug={companySlug} initialProducts={result} />;
 }

@@ -10,7 +10,7 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Building2, Loader2, Settings, Shield } from "lucide-react";
+import { Building2, CalendarDays, Loader2, Settings, Shield, SlidersHorizontal } from "lucide-react";
 import { toast } from "sonner";
 
 interface Props {
@@ -60,17 +60,30 @@ export function SettingsClient({ company, companySlug, settings }: Props) {
   }
 
   return (
-    <div className="p-6 space-y-6 max-w-3xl">
-      <div>
-        <h1 className="text-2xl font-bold text-white">Configurações</h1>
-        <p className="text-gray-400 text-sm mt-1">Gerencie os dados da sua empresa</p>
+    <div className="max-w-3xl space-y-4 p-4">
+      <div className="flex flex-wrap items-center gap-2">
+        <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
+          <CalendarDays className="mr-1.5 h-3.5 w-3.5" />
+          Last Month
+        </Button>
+        <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
+          Day
+        </Button>
+        <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
+          <SlidersHorizontal className="mr-1.5 h-3.5 w-3.5" />
+          Filters
+        </Button>
       </div>
 
-      {/* Company info */}
-      <Card className="bg-gray-900 border-gray-800">
+      <div className="rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3">
+        <h1 className="text-lg font-semibold text-zinc-100">Settings</h1>
+        <p className="mt-1 text-xs text-zinc-500">Company and plan preferences</p>
+      </div>
+
+      <Card className="border-zinc-800 bg-zinc-950">
         <CardHeader>
-          <CardTitle className="text-white flex items-center gap-2 text-base">
-            <Building2 className="w-4 h-4 text-blue-400" />
+          <CardTitle className="flex items-center gap-2 text-base text-white">
+            <Building2 className="h-4 w-4 text-zinc-300" />
             Dados da empresa
           </CardTitle>
           <CardDescription className="text-gray-400">
@@ -80,66 +93,65 @@ export function SettingsClient({ company, companySlug, settings }: Props) {
         <CardContent>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
             <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2 col-span-2">
+              <div className="col-span-2 space-y-2">
                 <Label className="text-gray-300">Nome da empresa *</Label>
-                <Input className="bg-gray-800 border-gray-700 text-gray-200" {...form.register("name")} />
-                {form.formState.errors.name && <p className="text-red-400 text-xs">{form.formState.errors.name.message}</p>}
+                <Input className="border-zinc-700 bg-zinc-900 text-gray-200" {...form.register("name")} />
+                {form.formState.errors.name && <p className="text-xs text-red-400">{form.formState.errors.name.message}</p>}
               </div>
               <div className="space-y-2">
                 <Label className="text-gray-300">CNPJ</Label>
-                <Input className="bg-gray-800 border-gray-700 text-gray-200 font-mono" {...form.register("cnpj")} />
+                <Input className="border-zinc-700 bg-zinc-900 font-mono text-gray-200" {...form.register("cnpj")} />
               </div>
               <div className="space-y-2">
                 <Label className="text-gray-300">Telefone</Label>
-                <Input className="bg-gray-800 border-gray-700 text-gray-200" {...form.register("phone")} />
+                <Input className="border-zinc-700 bg-zinc-900 text-gray-200" {...form.register("phone")} />
               </div>
-              <div className="space-y-2 col-span-2">
+              <div className="col-span-2 space-y-2">
                 <Label className="text-gray-300">E-mail da empresa</Label>
-                <Input type="email" className="bg-gray-800 border-gray-700 text-gray-200" {...form.register("email")} />
+                <Input type="email" className="border-zinc-700 bg-zinc-900 text-gray-200" {...form.register("email")} />
               </div>
             </div>
 
             <div className="flex items-center gap-2 pt-2">
-              <Label className="text-gray-400 text-sm">Slug (URL):</Label>
-              <code className="text-blue-400 text-sm bg-gray-800 px-2 py-0.5 rounded font-mono">/{company.slug}</code>
+              <Label className="text-sm text-gray-400">Slug (URL):</Label>
+              <code className="rounded bg-zinc-900 px-2 py-0.5 font-mono text-sm text-zinc-300">/{company.slug}</code>
             </div>
 
-            <Button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white" disabled={loading}>
-              {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
+            <Button type="submit" className="h-8 bg-zinc-100 px-3 text-xs font-medium text-zinc-900 hover:bg-zinc-200" disabled={loading}>
+              {loading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
               Salvar alterações
             </Button>
           </form>
         </CardContent>
       </Card>
 
-      {/* Plan */}
-      <Card className="bg-gray-900 border-gray-800">
+      <Card className="border-zinc-800 bg-zinc-950">
         <CardHeader>
-          <CardTitle className="text-white flex items-center gap-2 text-base">
-            <Shield className="w-4 h-4 text-purple-400" />
+          <CardTitle className="flex items-center gap-2 text-base text-white">
+            <Shield className="h-4 w-4 text-zinc-300" />
             Plano atual
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center gap-3">
-            <Badge className={`border-0 text-sm px-3 py-1 ${
-              company.plan === "ENTERPRISE" ? "bg-purple-900 text-purple-300" :
-              company.plan === "PRO" ? "bg-blue-900 text-blue-300" :
-              "bg-gray-700 text-gray-300"
+            <Badge className={`border-0 px-3 py-1 text-sm ${
+              company.plan === "ENTERPRISE" ? "bg-zinc-100 text-zinc-900" :
+              company.plan === "PRO" ? "bg-zinc-200 text-zinc-900" :
+              "bg-zinc-700 text-zinc-300"
             }`}>
               {company.plan}
             </Badge>
             {company.plan !== "ENTERPRISE" && (
-              <Button size="sm" className="bg-blue-600 hover:bg-blue-700 text-white h-8">
+              <Button size="sm" className="h-8 bg-zinc-100 text-zinc-900 hover:bg-zinc-200">
                 Fazer upgrade
               </Button>
             )}
           </div>
-          <Separator className="bg-gray-800" />
+          <Separator className="bg-zinc-800" />
           <ul className="space-y-2">
             {(planFeatures[company.plan] ?? planFeatures.FREE).map((f) => (
               <li key={f} className="flex items-center gap-2 text-sm text-gray-300">
-                <div className="w-1.5 h-1.5 rounded-full bg-blue-500" />
+                <div className="h-1.5 w-1.5 rounded-full bg-zinc-300" />
                 {f}
               </li>
             ))}
@@ -147,23 +159,22 @@ export function SettingsClient({ company, companySlug, settings }: Props) {
         </CardContent>
       </Card>
 
-      {/* System info */}
-      <Card className="bg-gray-900 border-gray-800">
+      <Card className="border-zinc-800 bg-zinc-950">
         <CardHeader>
-          <CardTitle className="text-white flex items-center gap-2 text-base">
-            <Settings className="w-4 h-4 text-gray-400" />
+          <CardTitle className="flex items-center gap-2 text-base text-white">
+            <Settings className="h-4 w-4 text-zinc-400" />
             Sistema
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-3">
-          <div className="flex justify-between items-center">
-            <span className="text-gray-400 text-sm">Moeda</span>
-            <span className="text-gray-200 text-sm">{settings?.currency ?? "BRL"} — Real Brasileiro</span>
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-gray-400">Moeda</span>
+            <span className="text-sm text-gray-200">{settings?.currency ?? "BRL"} — Real Brasileiro</span>
           </div>
-          <Separator className="bg-gray-800" />
-          <div className="flex justify-between items-center">
-            <span className="text-gray-400 text-sm">Versão</span>
-            <span className="text-gray-500 text-sm font-mono">1.0.0-beta</span>
+          <Separator className="bg-zinc-800" />
+          <div className="flex items-center justify-between">
+            <span className="text-sm text-gray-400">Versão</span>
+            <span className="font-mono text-sm text-gray-500">1.0.0-beta</span>
           </div>
         </CardContent>
       </Card>

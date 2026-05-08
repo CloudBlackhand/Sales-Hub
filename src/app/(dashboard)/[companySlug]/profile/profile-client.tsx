@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Building2, Camera, Loader2, MapPin, PencilLine } from "lucide-react";
+import { Building2, CalendarDays, Camera, Loader2, MapPin, PencilLine, SlidersHorizontal } from "lucide-react";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -75,7 +75,21 @@ export function ProfileClient({ company, profile, canEdit }: Props) {
   }
 
   return (
-    <div className="p-6 space-y-6">
+    <div className="space-y-4 p-4">
+      <div className="flex flex-wrap items-center gap-2">
+        <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
+          <CalendarDays className="mr-1.5 h-3.5 w-3.5" />
+          Last Month
+        </Button>
+        <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
+          Day
+        </Button>
+        <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
+          <SlidersHorizontal className="mr-1.5 h-3.5 w-3.5" />
+          Filters
+        </Button>
+      </div>
+
       <div className="rounded-2xl border border-zinc-800 bg-zinc-950 overflow-hidden">
         <div
           className="h-44 md:h-56 w-full bg-gradient-to-r from-blue-700/70 via-indigo-700/70 to-violet-700/70"
@@ -106,7 +120,7 @@ export function ProfileClient({ company, profile, canEdit }: Props) {
             {canEdit ? (
               <Button
                 variant={editing ? "secondary" : "outline"}
-                className="border-zinc-700 bg-zinc-900 text-zinc-200 hover:bg-zinc-800"
+                className="h-8 border-zinc-700 bg-zinc-900 text-xs text-zinc-200 hover:bg-zinc-800"
                 onClick={() => setEditing((v) => !v)}
                 type="button"
               >

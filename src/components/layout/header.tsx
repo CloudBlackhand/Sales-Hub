@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Building2, ChevronsUpDown, LogOut, Plus, Shield, User } from "lucide-react";
+import { Building2, CalendarDays, ChevronsUpDown, LogOut, Plus, Shield, SlidersHorizontal, User } from "lucide-react";
 import { toast } from "sonner";
 
 interface HeaderProps {
@@ -28,6 +28,7 @@ interface HeaderProps {
 
 export function Header({ user, company, companies, showSupervise }: HeaderProps) {
   const router = useRouter();
+  const controls = ["Last Month", "Day", "Filters"];
 
   async function handleSignOut() {
     await signOut({
@@ -42,26 +43,25 @@ export function Header({ user, company, companies, showSupervise }: HeaderProps)
   }
 
   const planColors: Record<string, string> = {
-    FREE: "bg-gray-700 text-gray-300",
-    PRO: "bg-blue-900 text-blue-300",
-    ENTERPRISE: "bg-purple-900 text-purple-300",
+    FREE: "bg-zinc-800 text-zinc-300",
+    PRO: "bg-zinc-100 text-zinc-900",
+    ENTERPRISE: "bg-zinc-200 text-zinc-900",
   };
 
   return (
-    <header className="flex h-16 shrink-0 items-center justify-between border-b border-zinc-900 bg-black px-6">
+    <header className="flex h-14 shrink-0 items-center justify-between border-b border-zinc-900 bg-zinc-950 px-4">
       {/* Company switcher */}
       <DropdownMenu>
         <DropdownMenuTrigger
-          className="flex h-10 items-center gap-3 rounded-lg px-3 text-sm font-medium text-zinc-200 transition-colors hover:bg-zinc-900 hover:text-white"
+          className="flex h-8 items-center gap-2 rounded-md border border-zinc-800 bg-zinc-900 px-2.5 text-sm text-zinc-200 transition-colors hover:bg-zinc-800 hover:text-white"
         >
-          <div className="w-7 h-7 rounded bg-blue-600 flex items-center justify-center flex-shrink-0">
-            <Building2 className="w-4 h-4 text-white" />
+          <div className="flex h-5 w-5 items-center justify-center rounded bg-blue-600/90 text-white">
+            <Building2 className="h-3 w-3" />
           </div>
-          <div className="text-left hidden sm:block">
-            <p className="text-sm font-medium leading-none truncate max-w-[160px]">{company.name}</p>
-            <p className="mt-0.5 text-xs capitalize text-zinc-500">{company.plan.toLowerCase()}</p>
+          <div className="hidden text-left sm:block">
+            <p className="max-w-[160px] truncate text-xs font-medium leading-none">{company.name}</p>
           </div>
-          <ChevronsUpDown className="ml-1 h-4 w-4 text-zinc-500" />
+          <ChevronsUpDown className="ml-1 h-3.5 w-3.5 text-zinc-500" />
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start" className="w-64 bg-gray-800 border-gray-700">
           <DropdownMenuGroup>
@@ -95,29 +95,44 @@ export function Header({ user, company, companies, showSupervise }: HeaderProps)
         </DropdownMenuContent>
       </DropdownMenu>
 
+      <div className="hidden items-center gap-1.5 md:flex">
+        {controls.map((item) => (
+          <Button
+            key={item}
+            size="sm"
+            variant="outline"
+            className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100"
+          >
+            {item === "Last Month" ? <CalendarDays className="mr-1.5 h-3.5 w-3.5" /> : null}
+            {item === "Filters" ? <SlidersHorizontal className="mr-1.5 h-3.5 w-3.5" /> : null}
+            {item}
+          </Button>
+        ))}
+      </div>
+
       {/* Supervisão global + plan badge + user */}
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
         {showSupervise ? (
           <Button
             type="button"
             variant="outline"
             size="sm"
-            className="hidden sm:inline-flex border-amber-600/50 bg-amber-950/40 text-amber-100 hover:bg-amber-950/70 hover:text-amber-50"
+            className="hidden h-8 border-amber-600/50 bg-amber-950/40 text-amber-100 hover:bg-amber-950/70 hover:text-amber-50 sm:inline-flex"
             onClick={() => router.push("/supervise")}
           >
-            <Shield className="w-4 h-4 mr-1.5" />
+            <Shield className="mr-1.5 h-4 w-4" />
             Supervisão
           </Button>
         ) : null}
-        <Badge className={`${planColors[company.plan] ?? planColors.FREE} border-0 text-xs`}>
+        <Badge className={`${planColors[company.plan] ?? planColors.FREE} border-0 text-[11px]`}>
           {company.plan}
         </Badge>
 
         <DropdownMenu>
-          <DropdownMenuTrigger className="relative h-9 w-9 rounded-full p-0 flex items-center justify-center hover:opacity-80 transition-opacity">
-            <Avatar className="h-9 w-9">
+          <DropdownMenuTrigger className="relative flex h-8 w-8 items-center justify-center rounded-full p-0 transition-opacity hover:opacity-80">
+            <Avatar className="h-8 w-8">
               <AvatarImage src={user.image ?? undefined} alt={user.name} />
-              <AvatarFallback className="bg-gray-700 text-gray-200 text-sm">
+              <AvatarFallback className="bg-gray-700 text-xs text-gray-200">
                 {getInitials(user.name)}
               </AvatarFallback>
             </Avatar>

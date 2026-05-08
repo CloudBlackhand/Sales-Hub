@@ -2,7 +2,7 @@
 
 import { db } from "@/lib/db";
 import { ActionResult, PaginatedResult } from "@/types";
-import { Seller, CommissionType } from "@/lib/prisma-types";
+import { Seller } from "@/lib/prisma-types";
 import { sellerSchema, type SellerInput } from "@/lib/schemas/sellers";
 
 export async function getSellers(

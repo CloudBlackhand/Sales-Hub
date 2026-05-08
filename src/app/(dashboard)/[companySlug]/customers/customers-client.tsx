@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Customer } from "@/lib/prisma-types";
 import { CustomersListResponse } from "@/lib/dashboard/contracts";
-import { Plus, MoreHorizontal, Pencil, Trash2, Mail, Phone } from "lucide-react";
+import { Plus, MoreHorizontal, Pencil, Trash2, Mail, Phone, CalendarDays, SlidersHorizontal } from "lucide-react";
 import { toast } from "sonner";
 import { CustomerFormDialog } from "@/components/forms/customer-form-dialog";
 import { formatDate } from "@/lib/utils";
@@ -122,14 +122,28 @@ export function CustomersClient({ companyId, companySlug, initialCustomers }: Cu
   ];
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 p-4">
+      <div className="flex flex-wrap items-center gap-2">
+        <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
+          <CalendarDays className="mr-1.5 h-3.5 w-3.5" />
+          Last Month
+        </Button>
+        <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
+          Day
+        </Button>
+        <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
+          <SlidersHorizontal className="mr-1.5 h-3.5 w-3.5" />
+          Filters
+        </Button>
+      </div>
+
+      <div className="flex items-center justify-between rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3">
         <div>
-          <h1 className="text-2xl font-bold text-white">Clientes</h1>
-          <p className="text-gray-400 text-sm mt-1">{customers.total} cliente{customers.total !== 1 ? "s" : ""} cadastrado{customers.total !== 1 ? "s" : ""}</p>
+          <h1 className="text-lg font-semibold text-zinc-100">Customers</h1>
+          <p className="mt-1 text-xs text-zinc-500">{customers.total} registros</p>
         </div>
-        <Button onClick={() => { setEditCustomer(null); setDialogOpen(true); }} className="bg-blue-600 hover:bg-blue-700 text-white gap-2">
-          <Plus className="w-4 h-4" /> Novo cliente
+        <Button onClick={() => { setEditCustomer(null); setDialogOpen(true); }} className="h-8 gap-2 bg-zinc-100 px-3 text-xs font-medium text-zinc-900 hover:bg-zinc-200">
+          <Plus className="h-3.5 w-3.5" /> Create customer
         </Button>
       </div>
 

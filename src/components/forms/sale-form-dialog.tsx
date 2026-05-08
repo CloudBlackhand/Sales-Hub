@@ -5,8 +5,6 @@ import { useForm, useFieldArray, type Resolver } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { saleSchema, type SaleInput } from "@/lib/schemas/sales";
 import { createSale } from "@/server/actions/sales";
-import { getProducts } from "@/server/actions/products";
-import { getCustomers } from "@/server/actions/customers";
 import { Seller, SaleType, SaleStatus } from "@/lib/prisma-types";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";

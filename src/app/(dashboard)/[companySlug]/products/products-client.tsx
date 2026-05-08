@@ -12,17 +12,16 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { formatCurrency } from "@/lib/utils";
-import { Product, ProductType } from "@/lib/prisma-types";
-import { type ProductInput } from "@/lib/schemas/products";
-import { getProducts, deleteProduct, updateProduct } from "@/server/actions/products";
-import { Plus, MoreHorizontal, Pencil, Archive } from "lucide-react";
+import { Product } from "@/lib/prisma-types";
+import { getProducts, deleteProduct } from "@/server/actions/products";
+import { Plus, MoreHorizontal, Pencil, Archive, CalendarDays, SlidersHorizontal } from "lucide-react";
 import { toast } from "sonner";
 import { ProductFormDialog } from "@/components/forms/product-form-dialog";
 
 const typeColors: Record<string, string> = {
-  PRODUCT: "bg-blue-900 text-blue-300",
-  SERVICE: "bg-purple-900 text-purple-300",
-  RENTAL: "bg-orange-900 text-orange-300",
+  PRODUCT: "bg-zinc-100 text-zinc-900",
+  SERVICE: "bg-zinc-700 text-zinc-200",
+  RENTAL: "bg-zinc-800 text-zinc-300",
 };
 
 const typeLabels: Record<string, string> = {
@@ -33,6 +32,7 @@ const typeLabels: Record<string, string> = {
 
 interface ProductsClientProps {
   companyId: string;
+  companySlug: string;
   initialProducts: { data: Product[]; total: number; page: number; perPage: number };
 }
 
@@ -73,8 +73,8 @@ export function ProductsClient({ companyId, initialProducts }: ProductsClientPro
       header: "Nome",
       cell: ({ row }) => (
         <div>
-          <p className="text-gray-200 font-medium">{row.original.name}</p>
-          {row.original.sku && <p className="text-gray-500 text-xs">SKU: {row.original.sku}</p>}
+          <p className="font-medium text-gray-200">{row.original.name}</p>
+          {row.original.sku && <p className="text-xs text-gray-500">SKU: {row.original.sku}</p>}
         </div>
       ),
     },
@@ -90,13 +90,13 @@ export function ProductsClient({ companyId, initialProducts }: ProductsClientPro
     {
       accessorKey: "price",
       header: "Preço",
-      cell: ({ row }) => <span className="text-white font-medium">{formatCurrency(Number(row.original.price))}</span>,
+      cell: ({ row }) => <span className="font-medium text-white">{formatCurrency(Number(row.original.price))}</span>,
     },
     {
       accessorKey: "rentalPricePerDay",
       header: "Preço/dia",
       cell: ({ row }) => row.original.rentalPricePerDay
-        ? <span className="text-orange-400">{formatCurrency(Number(row.original.rentalPricePerDay))}</span>
+        ? <span className="text-zinc-300">{formatCurrency(Number(row.original.rentalPricePerDay))}</span>
         : <span className="text-gray-600">—</span>,
     },
     {
@@ -110,7 +110,7 @@ export function ProductsClient({ companyId, initialProducts }: ProductsClientPro
       accessorKey: "isActive",
       header: "Ativo",
       cell: ({ row }) => (
-        <Switch checked={row.original.isActive} disabled className="data-[state=checked]:bg-blue-600" />
+        <Switch checked={row.original.isActive} disabled className="data-[state=checked]:bg-zinc-200" />
       ),
     },
     {
@@ -118,23 +118,23 @@ export function ProductsClient({ companyId, initialProducts }: ProductsClientPro
       cell: ({ row }) => (
         <DropdownMenu>
           <DropdownMenuTrigger>
-            <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-white hover:bg-gray-800">
-              <MoreHorizontal className="w-4 h-4" />
+            <Button variant="ghost" size="icon" className="h-7 w-7 text-zinc-500 hover:bg-zinc-900 hover:text-zinc-100">
+              <MoreHorizontal className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="bg-gray-800 border-gray-700">
+          <DropdownMenuContent align="end" className="border-gray-700 bg-gray-800">
             <DropdownMenuItem
-              className="text-gray-200 focus:bg-gray-700 cursor-pointer"
+              className="cursor-pointer text-gray-200 focus:bg-gray-700"
               onClick={() => { setEditProduct(row.original); setDialogOpen(true); }}
             >
-              <Pencil className="w-4 h-4 mr-2" /> Editar
+              <Pencil className="mr-2 h-4 w-4" /> Editar
             </DropdownMenuItem>
             <DropdownMenuSeparator className="bg-gray-700" />
             <DropdownMenuItem
-              className="text-red-400 focus:bg-gray-700 cursor-pointer"
+              className="cursor-pointer text-red-400 focus:bg-gray-700"
               onClick={() => handleDelete(row.original.id)}
             >
-              <Archive className="w-4 h-4 mr-2" /> Desativar
+              <Archive className="mr-2 h-4 w-4" /> Desativar
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -143,17 +143,31 @@ export function ProductsClient({ companyId, initialProducts }: ProductsClientPro
   ];
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 p-4">
+      <div className="flex flex-wrap items-center gap-2">
+        <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
+          <CalendarDays className="mr-1.5 h-3.5 w-3.5" />
+          Last Month
+        </Button>
+        <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
+          Day
+        </Button>
+        <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
+          <SlidersHorizontal className="mr-1.5 h-3.5 w-3.5" />
+          Filters
+        </Button>
+      </div>
+
+      <div className="flex items-center justify-between rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3">
         <div>
-          <h1 className="text-2xl font-bold text-white">Produtos & Serviços</h1>
-          <p className="text-gray-400 text-sm mt-1">{products.total} item{products.total !== 1 ? "s" : ""} no catálogo</p>
+          <h1 className="text-lg font-semibold text-zinc-100">Products</h1>
+          <p className="mt-1 text-xs text-zinc-500">{products.total} items</p>
         </div>
         <Button
           onClick={() => { setEditProduct(null); setDialogOpen(true); }}
-          className="bg-blue-600 hover:bg-blue-700 text-white gap-2"
+          className="h-8 gap-2 bg-zinc-100 px-3 text-xs font-medium text-zinc-900 hover:bg-zinc-200"
         >
-          <Plus className="w-4 h-4" /> Novo item
+          <Plus className="h-3.5 w-3.5" /> Create item
         </Button>
       </div>
 
@@ -169,14 +183,14 @@ export function ProductsClient({ companyId, initialProducts }: ProductsClientPro
         loading={loading}
         toolbar={
           <Select value={typeFilter} onValueChange={(v) => { const val = v ?? "ALL"; setTypeFilter(val); fetchProducts(1, search, val); }}>
-            <SelectTrigger className="w-36 bg-gray-800 border-gray-700 text-gray-300">
+            <SelectTrigger className="h-8 w-36 border-zinc-800 bg-zinc-900 text-xs text-zinc-300">
               <SelectValue placeholder="Tipo" />
             </SelectTrigger>
-            <SelectContent className="bg-gray-800 border-gray-700">
-              <SelectItem value="ALL" className="text-gray-200 focus:bg-gray-700">Todos</SelectItem>
-              <SelectItem value="PRODUCT" className="text-gray-200 focus:bg-gray-700">Produtos</SelectItem>
-              <SelectItem value="SERVICE" className="text-gray-200 focus:bg-gray-700">Serviços</SelectItem>
-              <SelectItem value="RENTAL" className="text-gray-200 focus:bg-gray-700">Aluguéis</SelectItem>
+            <SelectContent className="border-zinc-800 bg-zinc-900">
+              <SelectItem value="ALL" className="text-zinc-200 focus:bg-zinc-800">Todos</SelectItem>
+              <SelectItem value="PRODUCT" className="text-zinc-200 focus:bg-zinc-800">Produtos</SelectItem>
+              <SelectItem value="SERVICE" className="text-zinc-200 focus:bg-zinc-800">Serviços</SelectItem>
+              <SelectItem value="RENTAL" className="text-zinc-200 focus:bg-zinc-800">Aluguéis</SelectItem>
             </SelectContent>
           </Select>
         }

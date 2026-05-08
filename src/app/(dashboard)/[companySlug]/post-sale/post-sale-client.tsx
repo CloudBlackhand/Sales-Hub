@@ -12,7 +12,7 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Seller, ActivityStatus, PostSaleType } from "@/lib/prisma-types";
 import { getPostSaleActivities, updateActivityStatus } from "@/server/actions/post-sale";
-import { Plus, MoreHorizontal, CheckCircle, XCircle, Clock } from "lucide-react";
+import { Plus, MoreHorizontal, CheckCircle, XCircle, Clock, CalendarDays, SlidersHorizontal } from "lucide-react";
 import { toast } from "sonner";
 import { formatDate, formatDateTime } from "@/lib/utils";
 import { PostSaleFormDialog } from "@/components/forms/post-sale-form-dialog";
@@ -30,10 +30,10 @@ type ActivityRow = {
 };
 
 const statusColors: Record<string, string> = {
-  OPEN: "bg-yellow-900 text-yellow-300",
-  IN_PROGRESS: "bg-blue-900 text-blue-300",
-  RESOLVED: "bg-green-900 text-green-300",
-  CANCELLED: "bg-gray-700 text-gray-400",
+  OPEN: "bg-zinc-700 text-zinc-200",
+  IN_PROGRESS: "bg-zinc-100 text-zinc-900",
+  RESOLVED: "bg-zinc-100 text-zinc-900",
+  CANCELLED: "bg-zinc-800 text-zinc-400",
 };
 
 const statusLabels: Record<string, string> = {
@@ -53,16 +53,17 @@ const typeLabels: Record<string, string> = {
 };
 
 const typeColors: Record<string, string> = {
-  FOLLOWUP: "bg-blue-900 text-blue-300",
-  COMPLAINT: "bg-red-900 text-red-300",
-  RETURN: "bg-orange-900 text-orange-300",
-  FEEDBACK: "bg-purple-900 text-purple-300",
-  DELIVERY: "bg-green-900 text-green-300",
-  SUPPORT: "bg-cyan-900 text-cyan-300",
+  FOLLOWUP: "bg-zinc-700 text-zinc-200",
+  COMPLAINT: "bg-zinc-800 text-zinc-300",
+  RETURN: "bg-zinc-800 text-zinc-300",
+  FEEDBACK: "bg-zinc-700 text-zinc-200",
+  DELIVERY: "bg-zinc-100 text-zinc-900",
+  SUPPORT: "bg-zinc-700 text-zinc-200",
 };
 
 interface Props {
   companyId: string;
+  companySlug: string;
   initialActivities: { data: ActivityRow[]; total: number; page: number; perPage: number };
   sellers: Seller[];
 }
@@ -73,7 +74,7 @@ export function PostSaleClient({ companyId, initialActivities, sellers }: Props)
   const [statusFilter, setStatusFilter] = useState<string>("ALL");
   const [loading, setLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
 
   const fetch = useCallback(async (p: number, status: string) => {
     setLoading(true);
@@ -117,7 +118,7 @@ export function PostSaleClient({ companyId, initialActivities, sellers }: Props)
     {
       accessorKey: "assignedSeller",
       header: "Responsável",
-      cell: ({ row }) => <span className="text-gray-400 text-sm">{row.original.assignedSeller?.name ?? "—"}</span>,
+      cell: ({ row }) => <span className="text-sm text-gray-400">{row.original.assignedSeller?.name ?? "—"}</span>,
     },
     {
       accessorKey: "status",
@@ -132,40 +133,40 @@ export function PostSaleClient({ companyId, initialActivities, sellers }: Props)
       accessorKey: "scheduledAt",
       header: "Agendado",
       cell: ({ row }) => row.original.scheduledAt
-        ? <span className="text-gray-400 text-sm">{formatDateTime(row.original.scheduledAt)}</span>
+        ? <span className="text-sm text-gray-400">{formatDateTime(row.original.scheduledAt)}</span>
         : <span className="text-gray-600">—</span>,
     },
     {
       accessorKey: "createdAt",
       header: "Criado em",
-      cell: ({ row }) => <span className="text-gray-500 text-sm">{formatDate(row.original.createdAt)}</span>,
+      cell: ({ row }) => <span className="text-sm text-gray-500">{formatDate(row.original.createdAt)}</span>,
     },
     {
       id: "actions",
       cell: ({ row }) => (
         <DropdownMenu>
           <DropdownMenuTrigger>
-            <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-white hover:bg-gray-800">
-              <MoreHorizontal className="w-4 h-4" />
+            <Button variant="ghost" size="icon" className="h-7 w-7 text-zinc-500 hover:bg-zinc-900 hover:text-zinc-100">
+              <MoreHorizontal className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="bg-gray-800 border-gray-700">
+          <DropdownMenuContent align="end" className="border-gray-700 bg-gray-800">
             {row.original.status === "OPEN" && (
-              <DropdownMenuItem className="text-blue-400 focus:bg-gray-700 cursor-pointer"
+              <DropdownMenuItem className="cursor-pointer text-blue-400 focus:bg-gray-700"
                 onClick={() => handleStatusChange(row.original.id, ActivityStatus.IN_PROGRESS)}>
-                <Clock className="w-4 h-4 mr-2" /> Em andamento
+                <Clock className="mr-2 h-4 w-4" /> Em andamento
               </DropdownMenuItem>
             )}
             {["OPEN", "IN_PROGRESS"].includes(row.original.status) && (
-              <DropdownMenuItem className="text-green-400 focus:bg-gray-700 cursor-pointer"
+              <DropdownMenuItem className="cursor-pointer text-green-400 focus:bg-gray-700"
                 onClick={() => handleStatusChange(row.original.id, ActivityStatus.RESOLVED)}>
-                <CheckCircle className="w-4 h-4 mr-2" /> Resolver
+                <CheckCircle className="mr-2 h-4 w-4" /> Resolver
               </DropdownMenuItem>
             )}
             {["OPEN", "IN_PROGRESS"].includes(row.original.status) && (
-              <DropdownMenuItem className="text-red-400 focus:bg-gray-700 cursor-pointer"
+              <DropdownMenuItem className="cursor-pointer text-red-400 focus:bg-gray-700"
                 onClick={() => handleStatusChange(row.original.id, ActivityStatus.CANCELLED)}>
-                <XCircle className="w-4 h-4 mr-2" /> Cancelar
+                <XCircle className="mr-2 h-4 w-4" /> Cancelar
               </DropdownMenuItem>
             )}
           </DropdownMenuContent>
@@ -175,14 +176,28 @@ export function PostSaleClient({ companyId, initialActivities, sellers }: Props)
   ];
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 p-4">
+      <div className="flex flex-wrap items-center gap-2">
+        <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
+          <CalendarDays className="mr-1.5 h-3.5 w-3.5" />
+          Last Month
+        </Button>
+        <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
+          Day
+        </Button>
+        <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
+          <SlidersHorizontal className="mr-1.5 h-3.5 w-3.5" />
+          Filters
+        </Button>
+      </div>
+
+      <div className="flex items-center justify-between rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3">
         <div>
-          <h1 className="text-2xl font-bold text-white">Pós-Venda</h1>
-          <p className="text-gray-400 text-sm mt-1">{activities.total} atividade{activities.total !== 1 ? "s" : ""}</p>
+          <h1 className="text-lg font-semibold text-zinc-100">Post-sale</h1>
+          <p className="mt-1 text-xs text-zinc-500">{activities.total} atividades</p>
         </div>
-        <Button onClick={() => setDialogOpen(true)} className="bg-blue-600 hover:bg-blue-700 text-white gap-2">
-          <Plus className="w-4 h-4" /> Nova atividade
+        <Button onClick={() => setDialogOpen(true)} className="h-8 gap-2 bg-zinc-100 px-3 text-xs font-medium text-zinc-900 hover:bg-zinc-200">
+          <Plus className="h-3.5 w-3.5" /> Create activity
         </Button>
       </div>
 
@@ -196,13 +211,13 @@ export function PostSaleClient({ companyId, initialActivities, sellers }: Props)
         loading={loading}
         toolbar={
           <Select value={statusFilter} onValueChange={(v) => { const val = v ?? "ALL"; setStatusFilter(val); fetch(1, val); }}>
-            <SelectTrigger className="w-40 bg-gray-800 border-gray-700 text-gray-300">
+            <SelectTrigger className="h-8 w-40 border-zinc-800 bg-zinc-900 text-xs text-zinc-300">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent className="bg-gray-800 border-gray-700">
-              <SelectItem value="ALL" className="text-gray-200 focus:bg-gray-700">Todos</SelectItem>
+            <SelectContent className="border-zinc-800 bg-zinc-900">
+              <SelectItem value="ALL" className="text-zinc-200 focus:bg-zinc-800">Todos</SelectItem>
               {Object.entries(statusLabels).map(([k, v]) => (
-                <SelectItem key={k} value={k} className="text-gray-200 focus:bg-gray-700">{v}</SelectItem>
+                <SelectItem key={k} value={k} className="text-zinc-200 focus:bg-zinc-800">{v}</SelectItem>
               ))}
             </SelectContent>
           </Select>

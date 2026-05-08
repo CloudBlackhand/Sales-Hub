@@ -80,14 +80,14 @@ export function DataTable<TData, TValue>({
   const totalPages = Math.ceil(total / perPage);
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between gap-4">
+    <div className="space-y-3">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         {onSearch && (
-          <div className="relative flex-1 max-w-sm">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+          <div className="relative w-full max-w-xs">
+            <Search className="absolute left-2.5 top-1/2 h-3.5 w-3.5 -translate-y-1/2 text-zinc-500" />
             <Input
               placeholder={searchPlaceholder}
-              className="pl-10 bg-gray-800 border-gray-700 text-gray-200 placeholder:text-gray-500 focus-visible:ring-blue-500"
+              className="h-8 rounded-md border-zinc-800 bg-zinc-900 pl-8 text-xs text-zinc-200 placeholder:text-zinc-500 focus-visible:border-zinc-700 focus-visible:ring-0"
               onChange={(e) => onSearch(e.target.value)}
             />
           </div>
@@ -95,13 +95,13 @@ export function DataTable<TData, TValue>({
         {toolbar && <div className="flex items-center gap-2">{toolbar}</div>}
       </div>
 
-      <div className="rounded-lg border border-gray-800 overflow-hidden">
+      <div className="overflow-hidden rounded-xl border border-zinc-800 bg-zinc-950">
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id} className="border-gray-800 hover:bg-transparent">
+              <TableRow key={headerGroup.id} className="border-zinc-800 hover:bg-transparent">
                 {headerGroup.headers.map((header) => (
-                  <TableHead key={header.id} className="text-gray-400 font-medium bg-gray-900/50">
+                  <TableHead key={header.id} className="h-9 bg-zinc-900/60 px-3 text-xs font-medium text-zinc-500">
                     {header.isPlaceholder
                       ? null
                       : flexRender(header.column.columnDef.header, header.getContext())}
@@ -113,10 +113,10 @@ export function DataTable<TData, TValue>({
           <TableBody>
             {loading ? (
               Array.from({ length: 5 }).map((_, i) => (
-                <TableRow key={i} className="border-gray-800">
+                <TableRow key={i} className="border-zinc-800">
                   {columns.map((_, j) => (
-                    <TableCell key={j}>
-                      <Skeleton className="h-5 w-full bg-gray-800" />
+                    <TableCell key={j} className="px-3 py-2.5">
+                      <Skeleton className="h-4 w-full bg-zinc-800" />
                     </TableCell>
                   ))}
                 </TableRow>
@@ -125,19 +125,19 @@ export function DataTable<TData, TValue>({
               table.getRowModel().rows.map((row) => (
                 <TableRow
                   key={row.id}
-                  className="border-gray-800 hover:bg-gray-800/50 text-gray-300"
+                  className="border-zinc-800 text-zinc-300 hover:bg-zinc-900/70"
                   data-state={row.getIsSelected() && "selected"}
                 >
                   {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
+                    <TableCell key={cell.id} className="px-3 py-2.5 text-xs">
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </TableCell>
                   ))}
                 </TableRow>
               ))
             ) : (
-              <TableRow className="border-gray-800">
-                <TableCell colSpan={columns.length} className="h-32 text-center text-gray-500">
+              <TableRow className="border-zinc-800">
+                <TableCell colSpan={columns.length} className="h-24 text-center text-xs text-zinc-500">
                   Nenhum resultado encontrado
                 </TableCell>
               </TableRow>
@@ -148,45 +148,45 @@ export function DataTable<TData, TValue>({
 
       {onPageChange && totalPages > 1 && (
         <div className="flex items-center justify-between">
-          <p className="text-sm text-gray-400">
+          <p className="text-xs text-zinc-500">
             {total} registro{total !== 1 ? "s" : ""} · Página {page} de {totalPages}
           </p>
           <div className="flex items-center gap-1">
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 text-gray-400 hover:text-white hover:bg-gray-800"
+              className="h-7 w-7 text-zinc-500 hover:bg-zinc-900 hover:text-zinc-100"
               onClick={() => onPageChange(1)}
               disabled={page <= 1}
             >
-              <ChevronsLeft className="w-4 h-4" />
+              <ChevronsLeft className="h-3.5 w-3.5" />
             </Button>
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 text-gray-400 hover:text-white hover:bg-gray-800"
+              className="h-7 w-7 text-zinc-500 hover:bg-zinc-900 hover:text-zinc-100"
               onClick={() => onPageChange(page - 1)}
               disabled={page <= 1}
             >
-              <ChevronLeft className="w-4 h-4" />
+              <ChevronLeft className="h-3.5 w-3.5" />
             </Button>
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 text-gray-400 hover:text-white hover:bg-gray-800"
+              className="h-7 w-7 text-zinc-500 hover:bg-zinc-900 hover:text-zinc-100"
               onClick={() => onPageChange(page + 1)}
               disabled={page >= totalPages}
             >
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="h-3.5 w-3.5" />
             </Button>
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 text-gray-400 hover:text-white hover:bg-gray-800"
+              className="h-7 w-7 text-zinc-500 hover:bg-zinc-900 hover:text-zinc-100"
               onClick={() => onPageChange(totalPages)}
               disabled={page >= totalPages}
             >
-              <ChevronsRight className="w-4 h-4" />
+              <ChevronsRight className="h-3.5 w-3.5" />
             </Button>
           </div>
         </div>

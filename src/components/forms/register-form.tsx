@@ -60,85 +60,85 @@ export function RegisterForm() {
   }
 
   return (
-    <Card className="border-slate-700 bg-slate-800/50 backdrop-blur">
+    <Card className="border-zinc-800 bg-zinc-900/80 shadow-[0_0_0_1px_rgba(39,39,42,0.45)] backdrop-blur">
       <CardHeader>
-        <CardTitle className="text-white text-xl">Criar conta</CardTitle>
-        <CardDescription className="text-slate-400">
+        <CardTitle className="text-xl text-zinc-100">Criar conta</CardTitle>
+        <CardDescription className="text-zinc-500">
           Comece gratuitamente — sem cartão de crédito
         </CardDescription>
       </CardHeader>
       <CardContent>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="name" className="text-slate-300">Nome completo</Label>
+            <Label htmlFor="name" className="text-zinc-400">Nome completo</Label>
             <div className="relative">
-              <User className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+              <User className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
               <Input
                 id="name"
                 placeholder="João da Silva"
-                className="pl-10 bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-500"
+                className="h-9 border-zinc-800 bg-zinc-950 pl-10 text-zinc-100 placeholder:text-zinc-600"
                 {...form.register("name")}
               />
             </div>
             {form.formState.errors.name && (
-              <p className="text-red-400 text-xs">{form.formState.errors.name.message}</p>
+              <p className="text-xs text-red-400">{form.formState.errors.name.message}</p>
             )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-slate-300">E-mail</Label>
+            <Label htmlFor="email" className="text-zinc-400">E-mail</Label>
             <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+              <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
               <Input
                 id="email"
                 type="email"
                 placeholder="voce@empresa.com"
-                className="pl-10 bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-500"
+                className="h-9 border-zinc-800 bg-zinc-950 pl-10 text-zinc-100 placeholder:text-zinc-600"
                 {...form.register("email")}
               />
             </div>
             {form.formState.errors.email && (
-              <p className="text-red-400 text-xs">{form.formState.errors.email.message}</p>
+              <p className="text-xs text-red-400">{form.formState.errors.email.message}</p>
             )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password" className="text-slate-300">Senha</Label>
+            <Label htmlFor="password" className="text-zinc-400">Senha</Label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+              <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
               <Input
                 id="password"
                 type="password"
                 placeholder="••••••••"
-                className="pl-10 bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-500"
+                className="h-9 border-zinc-800 bg-zinc-950 pl-10 text-zinc-100 placeholder:text-zinc-600"
                 {...form.register("password")}
               />
             </div>
             {form.formState.errors.password && (
-              <p className="text-red-400 text-xs">{form.formState.errors.password.message}</p>
+              <p className="text-xs text-red-400">{form.formState.errors.password.message}</p>
             )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="confirmPassword" className="text-slate-300">Confirmar senha</Label>
+            <Label htmlFor="confirmPassword" className="text-zinc-400">Confirmar senha</Label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+              <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
               <Input
                 id="confirmPassword"
                 type="password"
                 placeholder="••••••••"
-                className="pl-10 bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-500"
+                className="h-9 border-zinc-800 bg-zinc-950 pl-10 text-zinc-100 placeholder:text-zinc-600"
                 {...form.register("confirmPassword")}
               />
             </div>
             {form.formState.errors.confirmPassword && (
-              <p className="text-red-400 text-xs">{form.formState.errors.confirmPassword.message}</p>
+              <p className="text-xs text-red-400">{form.formState.errors.confirmPassword.message}</p>
             )}
           </div>
 
           <Button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+            className="h-9 w-full border border-zinc-700 bg-zinc-800 text-zinc-100 hover:bg-zinc-700"
             disabled={loading}
           >
             {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
@@ -147,9 +147,9 @@ export function RegisterForm() {
         </form>
       </CardContent>
       <CardFooter className="justify-center">
-        <p className="text-slate-400 text-sm">
+        <p className="text-sm text-zinc-500">
           Já tem conta?{" "}
-          <Link href="/login" className="text-blue-400 hover:text-blue-300 font-medium">
+          <Link href="/login" className="font-medium text-zinc-300 hover:text-zinc-100">
             Entrar
           </Link>
         </p>

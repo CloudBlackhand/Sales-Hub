@@ -75,64 +75,64 @@ export function LoginForm() {
   }
 
   return (
-    <Card className="border-slate-700 bg-slate-800/50 backdrop-blur">
+    <Card className="border-zinc-800 bg-zinc-900/80 shadow-[0_0_0_1px_rgba(39,39,42,0.45)] backdrop-blur">
       <CardHeader>
-        <CardTitle className="text-white text-xl">Entrar na sua conta</CardTitle>
-        <CardDescription className="text-slate-400">
+        <CardTitle className="text-xl text-zinc-100">Entrar na sua conta</CardTitle>
+        <CardDescription className="text-zinc-500">
           Insira suas credenciais para acessar o painel
         </CardDescription>
       </CardHeader>
       <CardContent>
-        <div className="mb-4 rounded-lg border border-amber-500/30 bg-amber-500/10 px-3 py-2 text-xs text-amber-100/90">
-          <p className="font-medium text-amber-200">Demonstração para visitantes</p>
-          <p className="mt-1 text-amber-100/80">
+        <div className="mb-4 rounded-md border border-blue-500/25 bg-blue-500/10 px-3 py-2 text-xs text-blue-100/90">
+          <p className="font-medium text-blue-200">Demonstração para visitantes</p>
+          <p className="mt-1 text-blue-100/80">
             Usuário: <code className="rounded bg-black/30 px-1">admin</code> ou{" "}
             <code className="rounded bg-black/30 px-1">{DEMO_LOGIN_EMAIL}</code> — Senha:{" "}
             <code className="rounded bg-black/30 px-1">admin</code>
           </p>
-          <p className="mt-1 text-amber-100/60">
+          <p className="mt-1 text-blue-100/60">
             Rode <code className="rounded bg-black/30 px-1">npm run db:seed</code> após migrar o banco para criar essa conta e dados de exemplo.
           </p>
         </div>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-slate-300">E-mail ou &quot;admin&quot;</Label>
+            <Label htmlFor="email" className="text-zinc-400">E-mail ou &quot;admin&quot;</Label>
             <div className="relative">
-              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+              <Mail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
               <Input
                 id="email"
                 type="text"
                 autoComplete="username"
                 placeholder={`admin ou ${DEMO_LOGIN_EMAIL}`}
-                className="pl-10 bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-500"
+                className="h-9 border-zinc-800 bg-zinc-950 pl-10 text-zinc-100 placeholder:text-zinc-600"
                 {...form.register("email")}
               />
             </div>
             {form.formState.errors.email && (
-              <p className="text-red-400 text-xs">{form.formState.errors.email.message}</p>
+              <p className="text-xs text-red-400">{form.formState.errors.email.message}</p>
             )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password" className="text-slate-300">Senha</Label>
+            <Label htmlFor="password" className="text-zinc-400">Senha</Label>
             <div className="relative">
-              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
+              <Lock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-zinc-500" />
               <Input
                 id="password"
                 type="password"
                 placeholder="••••••••"
-                className="pl-10 bg-slate-700/50 border-slate-600 text-white placeholder:text-slate-500"
+                className="h-9 border-zinc-800 bg-zinc-950 pl-10 text-zinc-100 placeholder:text-zinc-600"
                 {...form.register("password")}
               />
             </div>
             {form.formState.errors.password && (
-              <p className="text-red-400 text-xs">{form.formState.errors.password.message}</p>
+              <p className="text-xs text-red-400">{form.formState.errors.password.message}</p>
             )}
           </div>
 
           <Button
             type="submit"
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+            className="h-9 w-full border border-zinc-700 bg-zinc-800 text-zinc-100 hover:bg-zinc-700"
             disabled={loading}
           >
             {loading ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : null}
@@ -141,9 +141,9 @@ export function LoginForm() {
         </form>
       </CardContent>
       <CardFooter className="justify-center">
-        <p className="text-slate-400 text-sm">
+        <p className="text-sm text-zinc-500">
           Não tem conta?{" "}
-          <Link href="/register" className="text-blue-400 hover:text-blue-300 font-medium">
+          <Link href="/register" className="font-medium text-zinc-300 hover:text-zinc-100">
             Criar conta
           </Link>
         </p>

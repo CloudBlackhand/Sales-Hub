@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Seller, CommissionType } from "@/lib/prisma-types";
 import { getSellers, toggleSellerStatus } from "@/server/actions/sellers";
-import { Plus, MoreHorizontal, Pencil, PowerOff } from "lucide-react";
+import { Plus, MoreHorizontal, Pencil, PowerOff, CalendarDays, SlidersHorizontal } from "lucide-react";
 import { toast } from "sonner";
 import { SellerFormDialog } from "@/components/forms/seller-form-dialog";
 import { formatCurrency } from "@/lib/utils";
@@ -25,14 +25,15 @@ const commissionLabels: Record<string, string> = {
 };
 
 const commissionColors: Record<string, string> = {
-  NONE: "bg-gray-700 text-gray-400",
-  FIXED: "bg-green-900 text-green-300",
-  PERCENTAGE: "bg-blue-900 text-blue-300",
-  MIXED: "bg-purple-900 text-purple-300",
+  NONE: "bg-zinc-800 text-zinc-400",
+  FIXED: "bg-zinc-100 text-zinc-900",
+  PERCENTAGE: "bg-zinc-700 text-zinc-200",
+  MIXED: "bg-zinc-700 text-zinc-200",
 };
 
 interface SellersClientProps {
   companyId: string;
+  companySlug: string;
   initialSellers: { data: Seller[]; total: number; page: number; perPage: number };
 }
 
@@ -69,8 +70,8 @@ export function SellersClient({ companyId, initialSellers }: SellersClientProps)
       header: "Vendedor",
       cell: ({ row }) => (
         <div>
-          <p className="text-gray-200 font-medium">{row.original.name}</p>
-          {row.original.email && <p className="text-gray-500 text-xs">{row.original.email}</p>}
+          <p className="font-medium text-gray-200">{row.original.name}</p>
+          {row.original.email && <p className="text-xs text-gray-500">{row.original.email}</p>}
         </div>
       ),
     },
@@ -89,8 +90,8 @@ export function SellersClient({ companyId, initialSellers }: SellersClientProps)
       cell: ({ row }) => {
         const v = Number(row.original.commissionValue);
         if (v === 0 || row.original.commissionType === CommissionType.NONE) return <span className="text-gray-600">—</span>;
-        if (row.original.commissionType === CommissionType.PERCENTAGE) return <span className="text-blue-400">{v}%</span>;
-        return <span className="text-green-400">{formatCurrency(v)}</span>;
+        if (row.original.commissionType === CommissionType.PERCENTAGE) return <span className="text-zinc-300">{v}%</span>;
+        return <span className="text-zinc-100">{formatCurrency(v)}</span>;
       },
     },
     {
@@ -100,7 +101,7 @@ export function SellersClient({ companyId, initialSellers }: SellersClientProps)
         <Switch
           checked={row.original.isActive}
           onCheckedChange={() => handleToggle(row.original.id)}
-          className="data-[state=checked]:bg-blue-600"
+          className="data-[state=checked]:bg-zinc-200"
         />
       ),
     },
@@ -109,19 +110,19 @@ export function SellersClient({ companyId, initialSellers }: SellersClientProps)
       cell: ({ row }) => (
         <DropdownMenu>
           <DropdownMenuTrigger>
-            <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-white hover:bg-gray-800">
-              <MoreHorizontal className="w-4 h-4" />
+            <Button variant="ghost" size="icon" className="h-7 w-7 text-zinc-500 hover:bg-zinc-900 hover:text-zinc-100">
+              <MoreHorizontal className="h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="bg-gray-800 border-gray-700">
-            <DropdownMenuItem className="text-gray-200 focus:bg-gray-700 cursor-pointer"
+          <DropdownMenuContent align="end" className="border-gray-700 bg-gray-800">
+            <DropdownMenuItem className="cursor-pointer text-gray-200 focus:bg-gray-700"
               onClick={() => { setEditSeller(row.original); setDialogOpen(true); }}>
-              <Pencil className="w-4 h-4 mr-2" /> Editar
+              <Pencil className="mr-2 h-4 w-4" /> Editar
             </DropdownMenuItem>
             <DropdownMenuSeparator className="bg-gray-700" />
-            <DropdownMenuItem className="text-yellow-400 focus:bg-gray-700 cursor-pointer"
+            <DropdownMenuItem className="cursor-pointer text-yellow-400 focus:bg-gray-700"
               onClick={() => handleToggle(row.original.id)}>
-              <PowerOff className="w-4 h-4 mr-2" /> {row.original.isActive ? "Desativar" : "Ativar"}
+              <PowerOff className="mr-2 h-4 w-4" /> {row.original.isActive ? "Desativar" : "Ativar"}
             </DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
@@ -130,14 +131,28 @@ export function SellersClient({ companyId, initialSellers }: SellersClientProps)
   ];
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 p-4">
+      <div className="flex flex-wrap items-center gap-2">
+        <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
+          <CalendarDays className="mr-1.5 h-3.5 w-3.5" />
+          Last Month
+        </Button>
+        <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
+          Day
+        </Button>
+        <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
+          <SlidersHorizontal className="mr-1.5 h-3.5 w-3.5" />
+          Filters
+        </Button>
+      </div>
+
+      <div className="flex items-center justify-between rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3">
         <div>
-          <h1 className="text-2xl font-bold text-white">Vendedores</h1>
-          <p className="text-gray-400 text-sm mt-1">{sellers.total} vendedor{sellers.total !== 1 ? "es" : ""} cadastrado{sellers.total !== 1 ? "s" : ""}</p>
+          <h1 className="text-lg font-semibold text-zinc-100">Sellers</h1>
+          <p className="mt-1 text-xs text-zinc-500">{sellers.total} registros</p>
         </div>
-        <Button onClick={() => { setEditSeller(null); setDialogOpen(true); }} className="bg-blue-600 hover:bg-blue-700 text-white gap-2">
-          <Plus className="w-4 h-4" /> Novo vendedor
+        <Button onClick={() => { setEditSeller(null); setDialogOpen(true); }} className="h-8 gap-2 bg-zinc-100 px-3 text-xs font-medium text-zinc-900 hover:bg-zinc-200">
+          <Plus className="h-3.5 w-3.5" /> Create seller
         </Button>
       </div>
 

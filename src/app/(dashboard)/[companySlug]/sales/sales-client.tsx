@@ -18,17 +18,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { Seller, SaleStatus } from "@/lib/prisma-types";
 import { SalesListItem, SalesListResponse } from "@/lib/dashboard/contracts";
-import { Plus, MoreHorizontal, Eye, CheckCircle, XCircle, Truck, ArrowUpDown } from "lucide-react";
+import { Plus, MoreHorizontal, Eye, CheckCircle, XCircle, Truck, ArrowUpDown, CalendarDays, SlidersHorizontal } from "lucide-react";
 import { toast } from "sonner";
 import { SaleFormDialog } from "@/components/forms/sale-form-dialog";
 
 const statusColors: Record<string, string> = {
-  DRAFT: "bg-gray-700 text-gray-300",
-  CONFIRMED: "bg-blue-900 text-blue-300",
-  IN_PROGRESS: "bg-yellow-900 text-yellow-300",
-  DELIVERED: "bg-green-900 text-green-300",
-  CANCELLED: "bg-red-900 text-red-300",
-  RETURNED: "bg-orange-900 text-orange-300",
+  DRAFT: "bg-zinc-800 text-zinc-300",
+  CONFIRMED: "bg-zinc-700 text-zinc-200",
+  IN_PROGRESS: "bg-zinc-700 text-zinc-200",
+  DELIVERED: "bg-zinc-100 text-zinc-900",
+  CANCELLED: "bg-zinc-800 text-zinc-400",
+  RETURNED: "bg-zinc-800 text-zinc-300",
 };
 
 const statusLabels: Record<string, string> = {
@@ -113,7 +113,7 @@ export function SalesClient({ companyId, companySlug, initialSales, sellers }: S
     {
       accessorKey: "number",
       header: ({ column }) => (
-        <Button variant="ghost" size="sm" className="text-gray-400 p-0 h-auto hover:text-white" onClick={() => column.toggleSorting()}>
+        <Button variant="ghost" size="sm" className="h-auto p-0 text-zinc-500 hover:text-zinc-100" onClick={() => column.toggleSorting()}>
           # <ArrowUpDown className="ml-1 w-3 h-3" />
         </Button>
       ),
@@ -163,7 +163,7 @@ export function SalesClient({ companyId, companySlug, initialSales, sellers }: S
       cell: ({ row }) => (
         <DropdownMenu>
           <DropdownMenuTrigger>
-            <Button variant="ghost" size="icon" className="h-8 w-8 text-gray-400 hover:text-white hover:bg-gray-800">
+            <Button variant="ghost" size="icon" className="h-7 w-7 text-zinc-500 hover:bg-zinc-900 hover:text-zinc-100">
               <MoreHorizontal className="w-4 h-4" />
             </Button>
           </DropdownMenuTrigger>
@@ -206,17 +206,31 @@ export function SalesClient({ companyId, companySlug, initialSales, sellers }: S
   ];
 
   return (
-    <div className="p-6 space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-4 p-4">
+      <div className="flex flex-wrap items-center gap-2">
+        <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
+          <CalendarDays className="mr-1.5 h-3.5 w-3.5" />
+          Last Month
+        </Button>
+        <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
+          Day
+        </Button>
+        <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
+          <SlidersHorizontal className="mr-1.5 h-3.5 w-3.5" />
+          Filters
+        </Button>
+      </div>
+
+      <div className="flex items-center justify-between rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3">
         <div>
-          <h1 className="text-2xl font-bold text-white">Vendas</h1>
-          <p className="text-gray-400 text-sm mt-1">{sales.total} venda{sales.total !== 1 ? "s" : ""} registrada{sales.total !== 1 ? "s" : ""}</p>
+          <h1 className="text-lg font-semibold text-zinc-100">Sales</h1>
+          <p className="mt-1 text-xs text-zinc-500">{sales.total} registros</p>
         </div>
         <Button
           onClick={() => setDialogOpen(true)}
-          className="bg-blue-600 hover:bg-blue-700 text-white gap-2"
+          className="h-8 gap-2 bg-zinc-100 px-3 text-xs font-medium text-zinc-900 hover:bg-zinc-200"
         >
-          <Plus className="w-4 h-4" /> Nova venda
+          <Plus className="h-3.5 w-3.5" /> Create sale
         </Button>
       </div>
 
@@ -232,13 +246,13 @@ export function SalesClient({ companyId, companySlug, initialSales, sellers }: S
         loading={loading}
         toolbar={
           <Select value={statusFilter} onValueChange={(v) => handleStatusFilter(v ?? "ALL")}>
-            <SelectTrigger className="w-40 bg-gray-800 border-gray-700 text-gray-300">
+            <SelectTrigger className="h-8 w-40 border-zinc-800 bg-zinc-900 text-xs text-zinc-300">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
-            <SelectContent className="bg-gray-800 border-gray-700">
-              <SelectItem value="ALL" className="text-gray-200 focus:bg-gray-700">Todos</SelectItem>
+            <SelectContent className="border-zinc-800 bg-zinc-900">
+              <SelectItem value="ALL" className="text-zinc-200 focus:bg-zinc-800">Todos</SelectItem>
               {Object.entries(statusLabels).map(([k, v]) => (
-                <SelectItem key={k} value={k} className="text-gray-200 focus:bg-gray-700">{v}</SelectItem>
+                <SelectItem key={k} value={k} className="text-zinc-200 focus:bg-zinc-800">{v}</SelectItem>
               ))}
             </SelectContent>
           </Select>
