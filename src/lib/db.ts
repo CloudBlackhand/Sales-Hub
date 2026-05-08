@@ -7,7 +7,12 @@ const globalForPrisma = globalThis as unknown as {
 };
 
 function createPrismaClient() {
-  const connectionString = process.env.DATABASE_URL!;
+  const connectionString = process.env.DATABASE_URL;
+  if (!connectionString?.trim()) {
+    throw new Error(
+      "DATABASE_URL não está definido. Sem isso o Prisma não conecta — login e migrações falham."
+    );
+  }
   const pool = new Pool({ connectionString });
   const adapter = new PrismaPg(pool);
   return new PrismaClient({ adapter });
