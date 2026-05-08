@@ -67,15 +67,15 @@ export function SaleFormDialog({ open, onClose, companyId, sellers, onSuccess }:
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl bg-gray-900 border-gray-700 text-white p-0">
+      <DialogContent className="w-[min(96vw,1080px)] max-w-[1080px] border-gray-700 bg-gray-900 p-0 text-white">
         <DialogHeader className="px-6 pt-6 pb-4 border-b border-gray-800">
           <DialogTitle className="text-white text-lg">Nova venda</DialogTitle>
         </DialogHeader>
 
-        <ScrollArea className="max-h-[80vh]">
-          <form onSubmit={form.handleSubmit(onSubmit)} className="mt-4 space-y-5 px-6 pb-6">
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-              <div className="space-y-2">
+        <ScrollArea className="max-h-[86vh]">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="mt-4 space-y-4 px-6 pb-6">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+              <div className="space-y-2 xl:col-span-2">
                 <Label className="text-gray-300">Vendedor *</Label>
                 <Select
                   value={form.watch("sellerId")}
@@ -97,7 +97,7 @@ export function SaleFormDialog({ open, onClose, companyId, sellers, onSuccess }:
                 )}
               </div>
 
-              <div className="space-y-2">
+              <div className="space-y-2 xl:col-span-2">
                 <Label className="text-gray-300">Tipo *</Label>
                 <Select
                   value={form.watch("type")}
@@ -113,9 +113,6 @@ export function SaleFormDialog({ open, onClose, companyId, sellers, onSuccess }:
                   </SelectContent>
                 </Select>
               </div>
-            </div>
-
-            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label className="text-gray-300">Data da venda *</Label>
                 <Input
@@ -152,7 +149,7 @@ export function SaleFormDialog({ open, onClose, companyId, sellers, onSuccess }:
               </div>
 
               {fields.map((field, index) => (
-                <div key={field.id} className="bg-gray-800/50 rounded-lg p-4 space-y-3">
+                <div key={field.id} className="space-y-3 rounded-lg bg-gray-800/50 p-3.5">
                   <div className="flex items-start justify-between gap-2">
                     <div className="flex-1 space-y-2">
                       <Input
@@ -220,7 +217,7 @@ export function SaleFormDialog({ open, onClose, companyId, sellers, onSuccess }:
 
             <Separator className="bg-gray-800" />
 
-            <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-2">
+            <div className="grid grid-cols-1 items-start gap-4 xl:grid-cols-3">
               <div className="space-y-2">
                 <Label className="text-gray-300">Observações</Label>
                 <Textarea
@@ -230,7 +227,7 @@ export function SaleFormDialog({ open, onClose, companyId, sellers, onSuccess }:
                   {...form.register("notes")}
                 />
               </div>
-              <div className="space-y-3 bg-gray-800/50 rounded-lg p-4">
+              <div className="space-y-3 rounded-lg bg-gray-800/50 p-4 xl:col-span-2">
                 <div className="flex justify-between text-sm">
                   <span className="text-gray-400">Subtotal</span>
                   <span className="text-gray-200">{formatCurrency(subtotal)}</span>
