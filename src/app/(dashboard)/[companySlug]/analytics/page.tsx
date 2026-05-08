@@ -6,7 +6,7 @@ import { db } from "@/lib/db";
 import { MemberRole } from "@/lib/prisma-types";
 import { OpenPanelEmbed } from "./openpanel-embed";
 
-export const metadata: Metadata = { title: "Analytics (OpenPanel)" };
+export const metadata: Metadata = { title: "Análises (OpenPanel)" };
 
 interface Props {
   params: Promise<{ companySlug: string }>;
@@ -36,9 +36,9 @@ export default async function AnalyticsPage({ params }: Props) {
       <div className="flex min-h-0 flex-1 flex-col items-center justify-center bg-black px-4 py-12">
         <div className="w-full max-w-md rounded-xl border border-zinc-800/90 bg-zinc-950/90 px-8 py-10 text-center shadow-[0_0_0_1px_rgba(24,24,27,0.5)]">
           <p className="text-xs font-medium uppercase tracking-[0.2em] text-zinc-500">OpenPanel</p>
-          <h1 className="mt-3 text-lg font-semibold tracking-tight text-zinc-100">Analytics não configurado</h1>
+          <h1 className="mt-3 text-lg font-semibold tracking-tight text-zinc-100">Painel OpenPanel não configurado</h1>
           <p className="mt-3 text-sm leading-relaxed text-zinc-500">
-            Define{" "}
+            Defina{" "}
             <code className="rounded bg-zinc-900 px-1.5 py-0.5 font-mono text-[0.8rem] text-amber-200/90">
               NEXT_PUBLIC_OPENPANEL_DASHBOARD_URL
             </code>{" "}

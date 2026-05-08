@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { companyProfileSchema, type CompanyProfileInput } from "@/lib/schemas/company-profile";
 import { updateCompanyProfile } from "@/server/actions/settings";
+import { dashboardToolbar } from "@/lib/dashboard-ui-strings";
 
 interface Props {
   company: {
@@ -79,14 +80,14 @@ export function ProfileClient({ company, profile, canEdit }: Props) {
       <div className="flex flex-wrap items-center gap-2">
         <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
           <CalendarDays className="mr-1.5 h-3.5 w-3.5" />
-          Last Month
+          {dashboardToolbar.lastMonth}
         </Button>
         <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
-          Day
+          {dashboardToolbar.day}
         </Button>
         <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
           <SlidersHorizontal className="mr-1.5 h-3.5 w-3.5" />
-          Filters
+          {dashboardToolbar.filters}
         </Button>
       </div>
 

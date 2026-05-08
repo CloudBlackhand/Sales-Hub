@@ -17,6 +17,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Building2, CalendarDays, ChevronsUpDown, LogOut, Plus, Shield, SlidersHorizontal, User } from "lucide-react";
 import { toast } from "sonner";
+import { dashboardToolbar } from "@/lib/dashboard-ui-strings";
 
 interface HeaderProps {
   user: { id: string; name: string; email: string; image: string | null };
@@ -28,7 +29,11 @@ interface HeaderProps {
 
 export function Header({ user, company, companies, showSupervise }: HeaderProps) {
   const router = useRouter();
-  const controls = ["Last Month", "Day", "Filters"];
+  const controls = [
+    dashboardToolbar.lastMonth,
+    dashboardToolbar.day,
+    dashboardToolbar.filters,
+  ] as const;
 
   async function handleSignOut() {
     await signOut({
@@ -103,8 +108,8 @@ export function Header({ user, company, companies, showSupervise }: HeaderProps)
             variant="outline"
             className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100"
           >
-            {item === "Last Month" ? <CalendarDays className="mr-1.5 h-3.5 w-3.5" /> : null}
-            {item === "Filters" ? <SlidersHorizontal className="mr-1.5 h-3.5 w-3.5" /> : null}
+            {item === dashboardToolbar.lastMonth ? <CalendarDays className="mr-1.5 h-3.5 w-3.5" /> : null}
+            {item === dashboardToolbar.filters ? <SlidersHorizontal className="mr-1.5 h-3.5 w-3.5" /> : null}
             {item}
           </Button>
         ))}

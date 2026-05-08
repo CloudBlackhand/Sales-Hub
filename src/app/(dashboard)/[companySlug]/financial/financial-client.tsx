@@ -20,6 +20,7 @@ import { Plus, MoreHorizontal, CheckCircle, DollarSign, TrendingUp, TrendingDown
 import { toast } from "sonner";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { TransactionFormDialog } from "@/components/forms/transaction-form-dialog";
+import { dashboardToolbar } from "@/lib/dashboard-ui-strings";
 
 const commStatusColors: Record<string, string> = {
   PENDING: "bg-zinc-700 text-zinc-200",
@@ -165,24 +166,24 @@ export function FinancialClient({ companyId, companySlug, initialTransactions, i
       <div className="flex flex-wrap items-center gap-2">
         <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
           <CalendarDays className="mr-1.5 h-3.5 w-3.5" />
-          Last Month
+          {dashboardToolbar.lastMonth}
         </Button>
         <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
-          Day
+          {dashboardToolbar.day}
         </Button>
         <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
           <SlidersHorizontal className="mr-1.5 h-3.5 w-3.5" />
-          Filters
+          {dashboardToolbar.filters}
         </Button>
       </div>
 
       <div className="flex items-center justify-between rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3">
         <div>
-          <h1 className="text-lg font-semibold text-zinc-100">Financial</h1>
-          <p className="mt-1 text-xs text-zinc-500">Transactions and commissions</p>
+          <h1 className="text-lg font-semibold text-zinc-100">Financeiro</h1>
+          <p className="mt-1 text-xs text-zinc-500">Lançamentos e comissões</p>
         </div>
         <Button onClick={() => setDialogOpen(true)} className="h-8 gap-2 bg-zinc-100 px-3 text-xs font-medium text-zinc-900 hover:bg-zinc-200">
-          <Plus className="h-3.5 w-3.5" /> Create transaction
+          <Plus className="h-3.5 w-3.5" /> Novo lançamento
         </Button>
       </div>
 
@@ -209,8 +210,8 @@ export function FinancialClient({ companyId, companySlug, initialTransactions, i
 
       <Tabs defaultValue="transactions">
         <TabsList className="h-8 border border-zinc-800 bg-zinc-900">
-          <TabsTrigger value="transactions" className="text-xs text-zinc-500 data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-100">Transactions</TabsTrigger>
-          <TabsTrigger value="commissions" className="text-xs text-zinc-500 data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-100">Commissions</TabsTrigger>
+          <TabsTrigger value="transactions" className="text-xs text-zinc-500 data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-100">Lançamentos</TabsTrigger>
+          <TabsTrigger value="commissions" className="text-xs text-zinc-500 data-[state=active]:bg-zinc-800 data-[state=active]:text-zinc-100">Comissões</TabsTrigger>
         </TabsList>
 
         <TabsContent value="transactions" className="mt-4">

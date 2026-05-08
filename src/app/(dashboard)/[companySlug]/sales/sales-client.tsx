@@ -21,6 +21,7 @@ import { SalesListItem, SalesListResponse } from "@/lib/dashboard/contracts";
 import { Plus, MoreHorizontal, Eye, CheckCircle, XCircle, Truck, ArrowUpDown, CalendarDays, SlidersHorizontal } from "lucide-react";
 import { toast } from "sonner";
 import { SaleFormDialog } from "@/components/forms/sale-form-dialog";
+import { dashboardToolbar } from "@/lib/dashboard-ui-strings";
 
 const statusColors: Record<string, string> = {
   DRAFT: "bg-zinc-800 text-zinc-300",
@@ -210,27 +211,27 @@ export function SalesClient({ companyId, companySlug, initialSales, sellers }: S
       <div className="flex flex-wrap items-center gap-2">
         <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
           <CalendarDays className="mr-1.5 h-3.5 w-3.5" />
-          Last Month
+          {dashboardToolbar.lastMonth}
         </Button>
         <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
-          Day
+          {dashboardToolbar.day}
         </Button>
         <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
           <SlidersHorizontal className="mr-1.5 h-3.5 w-3.5" />
-          Filters
+          {dashboardToolbar.filters}
         </Button>
       </div>
 
       <div className="flex items-center justify-between rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3">
         <div>
-          <h1 className="text-lg font-semibold text-zinc-100">Sales</h1>
+          <h1 className="text-lg font-semibold text-zinc-100">Vendas</h1>
           <p className="mt-1 text-xs text-zinc-500">{sales.total} registros</p>
         </div>
         <Button
           onClick={() => setDialogOpen(true)}
           className="h-8 gap-2 bg-zinc-100 px-3 text-xs font-medium text-zinc-900 hover:bg-zinc-200"
         >
-          <Plus className="h-3.5 w-3.5" /> Create sale
+          <Plus className="h-3.5 w-3.5" /> Nova venda
         </Button>
       </div>
 

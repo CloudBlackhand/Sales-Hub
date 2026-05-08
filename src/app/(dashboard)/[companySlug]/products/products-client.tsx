@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { formatCurrency } from "@/lib/utils";
+import { dashboardToolbar } from "@/lib/dashboard-ui-strings";
 import { Product } from "@/lib/prisma-types";
 import { getProducts, deleteProduct } from "@/server/actions/products";
 import { Plus, MoreHorizontal, Pencil, Archive, CalendarDays, SlidersHorizontal } from "lucide-react";
@@ -147,27 +148,27 @@ export function ProductsClient({ companyId, initialProducts }: ProductsClientPro
       <div className="flex flex-wrap items-center gap-2">
         <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
           <CalendarDays className="mr-1.5 h-3.5 w-3.5" />
-          Last Month
+          {dashboardToolbar.lastMonth}
         </Button>
         <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
-          Day
+          {dashboardToolbar.day}
         </Button>
         <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
           <SlidersHorizontal className="mr-1.5 h-3.5 w-3.5" />
-          Filters
+          {dashboardToolbar.filters}
         </Button>
       </div>
 
       <div className="flex items-center justify-between rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3">
         <div>
-          <h1 className="text-lg font-semibold text-zinc-100">Products</h1>
-          <p className="mt-1 text-xs text-zinc-500">{products.total} items</p>
+          <h1 className="text-lg font-semibold text-zinc-100">Produtos</h1>
+          <p className="mt-1 text-xs text-zinc-500">{products.total} produtos</p>
         </div>
         <Button
           onClick={() => { setEditProduct(null); setDialogOpen(true); }}
           className="h-8 gap-2 bg-zinc-100 px-3 text-xs font-medium text-zinc-900 hover:bg-zinc-200"
         >
-          <Plus className="h-3.5 w-3.5" /> Create item
+          <Plus className="h-3.5 w-3.5" /> Novo produto
         </Button>
       </div>
 

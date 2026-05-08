@@ -14,6 +14,7 @@ import {
   TrendingUp,
 } from "lucide-react";
 import Link from "next/link";
+import { dashboardToolbar } from "@/lib/dashboard-ui-strings";
 import { OverviewRevenueChart } from "./overview-revenue-chart";
 
 interface OverviewClientProps {
@@ -62,7 +63,7 @@ export function OverviewClient({
         sessions: Math.max(1, Math.round(seller.amount / 150)),
       }))
     : recentSales.slice(0, 6).map((sale) => ({
-        name: sale.customerName ?? "Direct / Not set",
+        name: sale.customerName ?? "Direto / não informado",
         views: Math.max(1, Math.round(sale.totalAmount / 120)),
         sessions: Math.max(1, Math.round(sale.totalAmount / 150)),
       })));
@@ -73,31 +74,31 @@ export function OverviewClient({
   }));
   const kpis = [
     {
-      label: "Unique Visitors",
+      label: "Visitantes únicos",
       value: customersCount.toLocaleString("pt-BR"),
       icon: Globe,
       delta: "+0.7%",
     },
     {
-      label: "Sessions",
+      label: "Vendas",
       value: salesCount.toString(),
       icon: MousePointerClick,
       delta: "+0.9%",
     },
     {
-      label: "Pageviews",
+      label: "Visualizações",
       value: Math.max(salesCount * 4, customersCount * 3).toLocaleString("pt-BR"),
       icon: TrendingUp,
       delta: "+0.6%",
     },
     {
-      label: "Session Duration",
+      label: "Tempo da sessão",
       value: "18s",
       icon: Clock3,
       delta: "+0.1%",
     },
     {
-      label: "Revenue",
+      label: "Receita",
       value: formatCurrency(summary.totalIncome),
       icon: Wallet,
       delta: summary.totalIncome > 0 ? "+0.5%" : "0.0%",
@@ -113,14 +114,14 @@ export function OverviewClient({
           className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100"
         >
           <CalendarDays className="mr-1.5 h-3.5 w-3.5" />
-          Last Month
+          {dashboardToolbar.lastMonth}
         </Button>
         <Button
           size="sm"
           variant="outline"
           className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100"
         >
-          Day
+          {dashboardToolbar.day}
         </Button>
         <Button
           size="sm"
@@ -128,7 +129,7 @@ export function OverviewClient({
           className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100"
         >
           <Filter className="mr-1.5 h-3.5 w-3.5" />
-          Filters
+          {dashboardToolbar.filters}
         </Button>
       </div>
 
@@ -165,7 +166,7 @@ export function OverviewClient({
 
       <Card className="border border-zinc-800 bg-zinc-950 py-2 shadow-none">
         <CardHeader className="pb-1">
-          <CardTitle className="text-sm font-medium text-zinc-200">Unique Visitors</CardTitle>
+          <CardTitle className="text-sm font-medium text-zinc-200">Receita</CardTitle>
         </CardHeader>
         <CardContent>
           {chartData.length > 0 ? (
@@ -181,15 +182,15 @@ export function OverviewClient({
       <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">
         <Card className="border border-zinc-800 bg-zinc-950 py-2 shadow-none">
           <CardHeader className="pb-1">
-            <CardTitle className="text-sm font-medium text-zinc-200">Refs</CardTitle>
+            <CardTitle className="text-sm font-medium text-zinc-200">Principais origens</CardTitle>
           </CardHeader>
           <CardContent>
             {refsRows.length > 0 ? (
               <div className="space-y-1">
                 <div className="grid grid-cols-[1fr_70px_70px] gap-2 border-b border-zinc-800 px-2 py-1 text-[11px] uppercase tracking-wide text-zinc-500">
-                  <span>Referrer name</span>
-                  <span className="text-right">Views</span>
-                  <span className="text-right">Sess.</span>
+                  <span>Origem</span>
+                  <span className="text-right">Visualizações</span>
+                  <span className="text-right">Sessões</span>
                 </div>
                 {refsRows.map((row, i) => (
                   <div key={`${row.name}-${i}`} className="grid grid-cols-[1fr_70px_70px] items-center gap-2 rounded-md px-2 py-1.5 text-xs hover:bg-zinc-900">
@@ -206,15 +207,15 @@ export function OverviewClient({
         </Card>
         <Card className="border border-zinc-800 bg-zinc-950 py-2 shadow-none">
           <CardHeader className="pb-1">
-            <CardTitle className="text-sm font-medium text-zinc-200">Pages</CardTitle>
+            <CardTitle className="text-sm font-medium text-zinc-200">Principais caminhos</CardTitle>
           </CardHeader>
           <CardContent>
             {pagesRows.length > 0 ? (
               <div className="space-y-1">
                 <div className="grid grid-cols-[1fr_70px_70px] gap-2 border-b border-zinc-800 px-2 py-1 text-[11px] uppercase tracking-wide text-zinc-500">
-                  <span>Path</span>
-                  <span className="text-right">Views</span>
-                  <span className="text-right">Sess.</span>
+                  <span>Caminho</span>
+                  <span className="text-right">Visualizações</span>
+                  <span className="text-right">Sessões</span>
                 </div>
                 {pagesRows.map((row, i) => (
                   <div key={`${row.path}-${i}`} className="grid grid-cols-[1fr_70px_70px] items-center gap-2 rounded-md px-2 py-1.5 text-xs hover:bg-zinc-900">
