@@ -121,6 +121,32 @@
   * {
     @apply border-border outline-ring/50;
   }
+
+  /* Scrollbar global no tema do app (WebKit + Firefox) */
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: oklch(0.371 0 0) oklch(0.205 0 0);
+  }
+
+  *::-webkit-scrollbar {
+    width: 10px;
+    height: 10px;
+  }
+
+  *::-webkit-scrollbar-track {
+    background: oklch(0.205 0 0);
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: oklch(0.371 0 0);
+    border: 2px solid oklch(0.205 0 0);
+    border-radius: 9999px;
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background: oklch(0.439 0 0);
+  }
+
   body {
     @apply bg-background text-foreground;
   }

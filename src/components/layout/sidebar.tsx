@@ -70,6 +70,19 @@ const openPanelDashboardUrl =
     ? process.env.NEXT_PUBLIC_OPENPANEL_DASHBOARD_URL.trim()
     : "";
 
+const preferredActiveLabelByRoute: Record<string, string> = {
+  overview: "Overview",
+  analytics: "Dashboards",
+  sales: "Vendas",
+  customers: "Clientes",
+  products: "Produtos",
+  sellers: "Vendedores",
+  "post-sale": "Pós-venda",
+  financial: "Financeiro",
+  profile: "Profiles",
+  settings: "Configurações",
+};
+
 export function Sidebar({ companySlug, role }: SidebarProps) {
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
@@ -79,6 +92,8 @@ export function Sidebar({ companySlug, role }: SidebarProps) {
     if (item.roles && !item.roles.includes(role)) return false;
     return true;
   });
+
+  const currentRoute = pathname.split("/")[2] ?? "";
 
   return (
     <TooltipProvider>
@@ -113,7 +128,10 @@ export function Sidebar({ companySlug, role }: SidebarProps) {
           <ul className="space-y-0.5 px-2.5">
             {visibleItems.map((item) => {
               const href = `/${companySlug}/${item.href}`;
-              const isActive = pathname.startsWith(href);
+              const isCurrentRoute = pathname === href || pathname.startsWith(`${href}/`);
+              const preferredLabel = preferredActiveLabelByRoute[item.href];
+              const isPreferredItem = preferredLabel ? item.label === preferredLabel : true;
+              const isActive = isCurrentRoute && isPreferredItem && item.href === currentRoute;
               const Icon = item.icon;
 
               return (
