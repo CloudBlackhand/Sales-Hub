@@ -73,15 +73,15 @@ export function SaleFormDialog({ open, onClose, companyId, sellers, onSuccess }:
         </DialogHeader>
 
         <ScrollArea className="max-h-[80vh]">
-          <form onSubmit={form.handleSubmit(onSubmit)} className="px-6 pb-6 space-y-5 mt-4">
-            <div className="grid grid-cols-2 gap-4">
+          <form onSubmit={form.handleSubmit(onSubmit)} className="mt-4 space-y-5 px-6 pb-6">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label className="text-gray-300">Vendedor *</Label>
                 <Select
                   value={form.watch("sellerId")}
                   onValueChange={(v) => { if (v) form.setValue("sellerId", v); }}
                 >
-                  <SelectTrigger className="bg-gray-800 border-gray-700 text-gray-200">
+                  <SelectTrigger className="bg-gray-800 border-gray-700 text-gray-200 [&>span]:truncate">
                     <SelectValue placeholder="Selecionar vendedor" />
                   </SelectTrigger>
                   <SelectContent className="bg-gray-800 border-gray-700">
@@ -103,7 +103,7 @@ export function SaleFormDialog({ open, onClose, companyId, sellers, onSuccess }:
                   value={form.watch("type")}
                   onValueChange={(v) => { if (v) form.setValue("type", v as SaleType); }}
                 >
-                  <SelectTrigger className="bg-gray-800 border-gray-700 text-gray-200">
+                  <SelectTrigger className="bg-gray-800 border-gray-700 text-gray-200 [&>span]:truncate">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent className="bg-gray-800 border-gray-700">
@@ -115,7 +115,7 @@ export function SaleFormDialog({ open, onClose, companyId, sellers, onSuccess }:
               </div>
             </div>
 
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <div className="space-y-2">
                 <Label className="text-gray-300">Data da venda *</Label>
                 <Input
@@ -173,7 +173,7 @@ export function SaleFormDialog({ open, onClose, companyId, sellers, onSuccess }:
                       </Button>
                     )}
                   </div>
-                  <div className="grid grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 gap-3 sm:grid-cols-3">
                     <div className="space-y-1">
                       <Label className="text-gray-400 text-xs">Qtd</Label>
                       <Input
@@ -220,7 +220,7 @@ export function SaleFormDialog({ open, onClose, companyId, sellers, onSuccess }:
 
             <Separator className="bg-gray-800" />
 
-            <div className="grid grid-cols-2 gap-4 items-start">
+            <div className="grid grid-cols-1 items-start gap-4 lg:grid-cols-2">
               <div className="space-y-2">
                 <Label className="text-gray-300">Observações</Label>
                 <Textarea
@@ -235,7 +235,7 @@ export function SaleFormDialog({ open, onClose, companyId, sellers, onSuccess }:
                   <span className="text-gray-400">Subtotal</span>
                   <span className="text-gray-200">{formatCurrency(subtotal)}</span>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
                   <Label className="text-gray-400 text-sm whitespace-nowrap">Desconto geral (R$)</Label>
                     <Input
                     type="number"
