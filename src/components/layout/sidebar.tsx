@@ -14,6 +14,7 @@ import {
   ChevronLeft,
   ChevronRight,
   TrendingUp,
+  BarChart3,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { MemberRole } from "@/lib/prisma-types";
@@ -42,6 +43,11 @@ interface SidebarProps {
   companySlug: string;
   role: MemberRole;
 }
+
+const openPanelDashboardUrl =
+  typeof process.env.NEXT_PUBLIC_OPENPANEL_DASHBOARD_URL === "string"
+    ? process.env.NEXT_PUBLIC_OPENPANEL_DASHBOARD_URL.trim()
+    : "";
 
 export function Sidebar({ companySlug, role }: SidebarProps) {
   const pathname = usePathname();
@@ -117,6 +123,39 @@ export function Sidebar({ companySlug, role }: SidebarProps) {
                 </li>
               );
             })}
+            {openPanelDashboardUrl &&
+            (role === MemberRole.OWNER || role === MemberRole.ADMIN) ? (
+              <li className="mt-2 pt-2 border-t border-gray-800">
+                {collapsed ? (
+                  <Tooltip>
+                    <TooltipTrigger
+                      className="flex items-center justify-center h-10 w-10 mx-auto rounded-lg transition-colors text-gray-400 hover:text-white hover:bg-gray-800"
+                    >
+                      <a
+                        href={openPanelDashboardUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-center w-full h-full"
+                        aria-label="Analytics (OpenPanel)"
+                      >
+                        <BarChart3 className="w-5 h-5" />
+                      </a>
+                    </TooltipTrigger>
+                    <TooltipContent side="right">Analytics (OpenPanel)</TooltipContent>
+                  </Tooltip>
+                ) : (
+                  <a
+                    href={openPanelDashboardUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex items-center gap-3 h-10 px-3 rounded-lg transition-colors text-sm font-medium text-gray-400 hover:text-white hover:bg-gray-800"
+                  >
+                    <BarChart3 className="w-4 h-4 flex-shrink-0" />
+                    <span className="truncate">Analytics</span>
+                  </a>
+                )}
+              </li>
+            ) : null}
           </ul>
         </nav>
 

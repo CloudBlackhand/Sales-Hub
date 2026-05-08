@@ -21,16 +21,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   const openPanelClientId = process.env.NEXT_PUBLIC_OPENPANEL_CLIENT_ID;
-  const openPanelApiUrl = process.env.NEXT_PUBLIC_OPENPANEL_API_URL;
-  const openPanelUseProxy =
-    process.env.NEXT_PUBLIC_OPENPANEL_USE_PROXY === "1" ||
-    process.env.NEXT_PUBLIC_OPENPANEL_USE_PROXY === "true";
-
-  const openPanelUrls = openPanelUseProxy
-    ? { apiUrl: "/api/op", scriptUrl: "/api/op/op1.js" as const }
-    : openPanelApiUrl
-      ? { apiUrl: openPanelApiUrl }
-      : {};
+  const useOpenPanelProxy = process.env.NEXT_PUBLIC_OPENPANEL_USE_PROXY === "1";
+  const openPanelApiUrl = useOpenPanelProxy
+    ? "/api/op"
+    : process.env.NEXT_PUBLIC_OPENPANEL_API_URL;
+  const openPanelScriptUrl = useOpenPanelProxy
+    ? "/api/op/op1.js"
+    : process.env.NEXT_PUBLIC_OPENPANEL_SCRIPT_URL;
 
   return (
     <html lang="pt-BR" suppressHydrationWarning>
@@ -40,7 +37,8 @@ export default function RootLayout({
             clientId={openPanelClientId}
             trackScreenViews
             trackOutgoingLinks={false}
-            {...openPanelUrls}
+            {...(openPanelApiUrl ? { apiUrl: openPanelApiUrl } : {})}
+            {...(openPanelScriptUrl ? { scriptUrl: openPanelScriptUrl } : {})}
             globalProperties={{
               app: process.env.NEXT_PUBLIC_APP_NAME ?? "Sales Hub",
             }}

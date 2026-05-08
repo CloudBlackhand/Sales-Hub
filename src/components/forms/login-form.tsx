@@ -6,6 +6,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
+import { useOpenPanel } from "@openpanel/nextjs";
 import { signIn } from "@/lib/auth-client";
 import { DEMO_LOGIN_EMAIL, resolveLoginEmail } from "@/lib/demo-login";
 import { Button } from "@/components/ui/button";
@@ -27,6 +28,7 @@ export function LoginForm() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") ?? "/";
   const [loading, setLoading] = useState(false);
+  const openPanel = useOpenPanel();
 
   const form = useForm<LoginValues>({
     resolver: zodResolver(loginSchema),
@@ -58,6 +60,10 @@ export function LoginForm() {
           "Não foi possível entrar.";
         toast.error(msg);
         return;
+      }
+
+      if (process.env.NEXT_PUBLIC_OPENPANEL_CLIENT_ID) {
+        openPanel.track("user_signed_in", { method: "email" });
       }
 
       router.push(callbackUrl);

@@ -1,12 +1,12 @@
 "use server";
 
 import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
+import { auth } from "@/lib/auth";
 import { ActionResult, PaginatedResult } from "@/types";
 import { Sale, SaleStatus, SaleType, CommissionType } from "@/lib/prisma-types";
 import { saleSchema, type SaleInput } from "@/lib/schemas/sales";
-import { trackOpenPanelSaleCreated, trackOpenPanelSaleStatusChanged } from "@/lib/openpanel-server";
+import { trackOpenPanelSaleCreated, trackOpenPanelSaleStatusUpdated } from "@/lib/openpanel-server";
 
 type SaleWithRelations = Sale & {
   seller: { id: string; name: string; code: string };
@@ -200,27 +200,20 @@ export async function createSale(
       return s;
     });
 
-    const hdrs = await headers();
-    const session = await auth.api.getSession({ headers: hdrs });
-    if (session) {
-      const companyMeta = await db.company.findUnique({
-        where: { id: companyId },
-        select: { name: true, slug: true },
-      });
-      if (companyMeta) {
-        void trackOpenPanelSaleCreated({
-          profileId: session.user.id,
-          companyId,
-          companyName: companyMeta.name,
-          companySlug: companyMeta.slug,
-          saleId: sale.id,
-          saleNumber: sale.number,
-          saleType: String(sale.type),
-          status: String(sale.status),
-          totalAmount: Number(sale.totalAmount),
-          itemsCount: parsed.data.items.length,
-        });
-      }
+    const company = await db.company.findUnique({
+      where: { id: companyId },
+      select: { slug: true },
+    });
+    if (company) {
+      const session = await auth.api.getSession({ headers: await headers() });
+      void trackOpenPanelSaleCreated({
+        companySlug: company.slug,
+        saleId: sale.id,
+        saleNumber: sale.number,
+        status: sale.status,
+        amount: Number(sale.totalAmount),
+        profileId: session?.user?.id,
+      }).catch((err) => console.error("[OpenPanel] sale_created", err));
     }
 
     return { success: true, data: sale };
@@ -249,25 +242,21 @@ export async function updateSaleStatus(
       },
     });
 
-    const hdrs = await headers();
-    const session = await auth.api.getSession({ headers: hdrs });
-    if (session) {
-      const companyMeta = await db.company.findUnique({
-        where: { id: companyId },
-        select: { name: true, slug: true },
-      });
-      if (companyMeta) {
-        void trackOpenPanelSaleStatusChanged({
-          profileId: session.user.id,
-          companyId,
-          companyName: companyMeta.name,
-          companySlug: companyMeta.slug,
-          saleId: sale.id,
-          saleNumber: sale.number,
-          fromStatus: String(previousStatus),
-          toStatus: String(status),
-        });
-      }
+    const company = await db.company.findUnique({
+      where: { id: companyId },
+      select: { slug: true },
+    });
+    if (company) {
+      const session = await auth.api.getSession({ headers: await headers() });
+      void trackOpenPanelSaleStatusUpdated({
+        companySlug: company.slug,
+        saleId: sale.id,
+        saleNumber: sale.number,
+        previousStatus,
+        status,
+        amount: Number(sale.totalAmount),
+        profileId: session?.user?.id,
+      }).catch((err) => console.error("[OpenPanel] sale_status_updated", err));
     }
 
     return { success: true };
