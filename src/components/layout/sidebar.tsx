@@ -15,6 +15,7 @@ import {
   ChevronRight,
   TrendingUp,
   BarChart3,
+  CircleUserRound,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { MemberRole } from "@/lib/prisma-types";
@@ -32,6 +33,7 @@ interface NavItem {
 
 const navItems: NavItem[] = [
   { label: "Visão Geral", href: "overview", icon: LayoutDashboard },
+  { label: "Perfil", href: "profile", icon: CircleUserRound },
   { label: "Vendas", href: "sales", icon: ShoppingCart },
   { label: "Clientes", href: "customers", icon: Users },
   { label: "Produtos", href: "products", icon: Package },
