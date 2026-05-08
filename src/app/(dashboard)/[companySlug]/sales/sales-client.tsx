@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import {
   DropdownMenu,
   DropdownMenuContent,
+  DropdownMenuGroup,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
@@ -167,35 +168,37 @@ export function SalesClient({ companyId, companySlug, initialSales, sellers }: S
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end" className="bg-gray-800 border-gray-700 w-48">
-            <DropdownMenuLabel className="text-gray-400 text-xs">Ações</DropdownMenuLabel>
-            <DropdownMenuSeparator className="bg-gray-700" />
-            <DropdownMenuItem className="text-gray-200 focus:bg-gray-700 cursor-pointer">
-              <Eye className="w-4 h-4 mr-2" /> Ver detalhes
-            </DropdownMenuItem>
-            {row.original.status === "DRAFT" && (
-              <DropdownMenuItem
-                className="text-blue-400 focus:bg-gray-700 cursor-pointer"
-                onClick={() => handleStatusChange(row.original.id, SaleStatus.CONFIRMED)}
-              >
-                <CheckCircle className="w-4 h-4 mr-2" /> Confirmar
+            <DropdownMenuGroup>
+              <DropdownMenuLabel className="text-gray-400 text-xs">Ações</DropdownMenuLabel>
+              <DropdownMenuSeparator className="bg-gray-700" />
+              <DropdownMenuItem className="text-gray-200 focus:bg-gray-700 cursor-pointer">
+                <Eye className="w-4 h-4 mr-2" /> Ver detalhes
               </DropdownMenuItem>
-            )}
-            {row.original.status === "CONFIRMED" && (
-              <DropdownMenuItem
-                className="text-green-400 focus:bg-gray-700 cursor-pointer"
-                onClick={() => handleStatusChange(row.original.id, SaleStatus.DELIVERED)}
-              >
-                <Truck className="w-4 h-4 mr-2" /> Marcar entregue
-              </DropdownMenuItem>
-            )}
-            {["DRAFT", "CONFIRMED"].includes(row.original.status) && (
-              <DropdownMenuItem
-                className="text-red-400 focus:bg-gray-700 cursor-pointer"
-                onClick={() => handleStatusChange(row.original.id, SaleStatus.CANCELLED)}
-              >
-                <XCircle className="w-4 h-4 mr-2" /> Cancelar
-              </DropdownMenuItem>
-            )}
+              {row.original.status === "DRAFT" && (
+                <DropdownMenuItem
+                  className="text-blue-400 focus:bg-gray-700 cursor-pointer"
+                  onClick={() => handleStatusChange(row.original.id, SaleStatus.CONFIRMED)}
+                >
+                  <CheckCircle className="w-4 h-4 mr-2" /> Confirmar
+                </DropdownMenuItem>
+              )}
+              {row.original.status === "CONFIRMED" && (
+                <DropdownMenuItem
+                  className="text-green-400 focus:bg-gray-700 cursor-pointer"
+                  onClick={() => handleStatusChange(row.original.id, SaleStatus.DELIVERED)}
+                >
+                  <Truck className="w-4 h-4 mr-2" /> Marcar entregue
+                </DropdownMenuItem>
+              )}
+              {["DRAFT", "CONFIRMED"].includes(row.original.status) && (
+                <DropdownMenuItem
+                  className="text-red-400 focus:bg-gray-700 cursor-pointer"
+                  onClick={() => handleStatusChange(row.original.id, SaleStatus.CANCELLED)}
+                >
+                  <XCircle className="w-4 h-4 mr-2" /> Cancelar
+                </DropdownMenuItem>
+              )}
+            </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
       ),
