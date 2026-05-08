@@ -1,11 +1,7 @@
 import { IdentifyOpenPanel } from "@/components/openpanel/open-panel-scripts";
-import { redirect } from "next/navigation";
-import { headers } from "next/headers";
-import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
-import { isPlatformAdmin } from "@/lib/platform-admin";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
+import { requireDashboardContext } from "@/server/dashboard/context";
 
 interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -14,25 +10,10 @@ interface DashboardLayoutProps {
 
 export default async function DashboardLayout({ children, params }: DashboardLayoutProps) {
   const { companySlug } = await params;
-  const session = await auth.api.getSession({ headers: await headers() });
-  if (!session) redirect("/login");
-
-  const company = await db.company.findUnique({ where: { slug: companySlug } });
-  if (!company) redirect("/onboarding");
-
-  const membership = await db.companyMember.findUnique({
-    where: { userId_companyId: { userId: session.user.id, companyId: company.id } },
-  });
-  if (!membership) redirect("/onboarding");
-
-  const allMemberships = await db.companyMember.findMany({
-    where: { userId: session.user.id },
-    include: { company: { select: { id: true, name: true, slug: true, logo: true } } },
-    orderBy: { joinedAt: "asc" },
-  });
-
-  const companies = allMemberships.map((m) => m.company);
-  const showSupervise = isPlatformAdmin(session.user.email);
+  const { session, company, membership, companies, showSupervise } = await requireDashboardContext(
+    companySlug,
+    { includeCompanies: true }
+  );
 
   const openPanelClientId = process.env.NEXT_PUBLIC_OPENPANEL_CLIENT_ID;
   const displayName = session.user.name?.trim() ?? "";
@@ -40,7 +21,7 @@ export default async function DashboardLayout({ children, params }: DashboardLay
   const lastName = rest.join(" ") || undefined;
 
   return (
-    <div className="flex h-screen overflow-hidden bg-black">
+    <div className="flex h-screen overflow-hidden bg-zinc-950 text-zinc-100">
       {openPanelClientId ? (
         <IdentifyOpenPanel
           profileId={session.user.id}
@@ -55,14 +36,14 @@ export default async function DashboardLayout({ children, params }: DashboardLay
         />
       ) : null}
       <Sidebar companySlug={companySlug} role={membership.role} />
-      <div className="flex flex-col flex-1 min-w-0 overflow-hidden">
+      <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
         <Header
           user={{ id: session.user.id, name: session.user.name, email: session.user.email, image: session.user.image ?? null }}
           company={company}
           companies={companies}
           showSupervise={showSupervise}
         />
-        <main className="flex min-h-0 flex-1 flex-col overflow-y-auto overflow-x-hidden bg-black">
+        <main className="flex min-h-0 flex-1 flex-col overflow-y-auto overflow-x-hidden bg-zinc-950">
           {children}
         </main>
       </div>

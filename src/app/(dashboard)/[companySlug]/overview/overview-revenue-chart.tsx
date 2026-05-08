@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { formatCurrency } from "@/lib/utils";
 import {
   Area,
@@ -15,21 +14,6 @@ import {
 type Point = { date: string; amount: number };
 
 export function OverviewRevenueChart({ chartData }: { chartData: Point[] }) {
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
-
-  if (!mounted) {
-    return (
-      <div
-        className="h-[240px] w-full rounded-md bg-zinc-900/40"
-        aria-hidden
-      />
-    );
-  }
-
   return (
     <ResponsiveContainer width="100%" height={240}>
       <AreaChart data={chartData}>

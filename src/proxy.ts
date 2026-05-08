@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from "next/server";
 
 const publicPaths = ["/login", "/register", "/api/auth", "/api/health"];
 
-/** Parse simples de Cookie header — compatível com Edge (sem Prisma / Node APIs). */
 function parseCookieHeader(cookieHeader: string | null): Map<string, string> {
   const map = new Map<string, string>();
   if (!cookieHeader) return map;
@@ -17,10 +16,6 @@ function parseCookieHeader(cookieHeader: string | null): Map<string, string> {
   return map;
 }
 
-/**
- * Better Auth (padrão): `better-auth.session_token` ou `__Secure-better-auth.session_token` em HTTPS.
- * Só presença do cookie — validação completa continua em Server Components / API (Node).
- */
 function hasSessionCookie(request: NextRequest): boolean {
   const cookies = parseCookieHeader(request.headers.get("cookie"));
   const keys = ["better-auth.session_token", "__Secure-better-auth.session_token"];
@@ -31,7 +26,7 @@ function hasSessionCookie(request: NextRequest): boolean {
   return false;
 }
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   if (publicPaths.some((p) => pathname.startsWith(p))) {

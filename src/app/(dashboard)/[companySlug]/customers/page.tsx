@@ -1,10 +1,7 @@
 import type { Metadata } from "next";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
 import { getCustomers } from "@/server/actions/customers";
 import { CustomersClient } from "./customers-client";
+import { requireDashboardContext } from "@/server/dashboard/context";
 
 export const metadata: Metadata = { title: "Clientes" };
 
@@ -16,10 +13,7 @@ interface Props {
 export default async function CustomersPage({ params, searchParams }: Props) {
   const { companySlug } = await params;
   const sp = await searchParams;
-  const session = await auth.api.getSession({ headers: await headers() });
-  if (!session) redirect("/login");
-  const company = await db.company.findUnique({ where: { slug: companySlug } });
-  if (!company) redirect("/onboarding");
+  const { company } = await requireDashboardContext(companySlug);
   const result = await getCustomers(company.id, { page: sp.page ? parseInt(sp.page) : 1, search: sp.search });
-  return <CustomersClient companyId={company.id} initialCustomers={result} />;
+  return <CustomersClient companyId={company.id} companySlug={companySlug} initialCustomers={result} />;
 }

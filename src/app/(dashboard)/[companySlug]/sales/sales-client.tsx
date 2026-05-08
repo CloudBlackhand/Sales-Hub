@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useTransition, useCallback } from "react";
-import { useRouter } from "next/navigation";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/tables/data-table";
 import { Button } from "@/components/ui/button";
@@ -18,21 +17,10 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { Seller, SaleStatus } from "@/lib/prisma-types";
-import { getSales, updateSaleStatus } from "@/server/actions/sales";
+import { SalesListItem, SalesListResponse } from "@/lib/dashboard/contracts";
 import { Plus, MoreHorizontal, Eye, CheckCircle, XCircle, Truck, ArrowUpDown } from "lucide-react";
 import { toast } from "sonner";
 import { SaleFormDialog } from "@/components/forms/sale-form-dialog";
-
-type SaleRow = {
-  id: string;
-  number: number;
-  type: string;
-  status: string;
-  totalAmount: unknown;
-  saleDate: Date;
-  seller: { id: string; name: string; code: string };
-  customer: { id: string; name: string } | null;
-};
 
 const statusColors: Record<string, string> = {
   DRAFT: "bg-gray-700 text-gray-300",
@@ -61,13 +49,12 @@ const typeLabels: Record<string, string> = {
 interface SalesClientProps {
   companyId: string;
   companySlug: string;
-  initialSales: { data: SaleRow[]; total: number; page: number; perPage: number };
+  initialSales: SalesListResponse;
   sellers: Seller[];
 }
 
 export function SalesClient({ companyId, companySlug, initialSales, sellers }: SalesClientProps) {
-  const router = useRouter();
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
   const [sales, setSales] = useState(initialSales);
   const [page, setPage] = useState(initialSales.page);
   const [search, setSearch] = useState("");
@@ -75,17 +62,25 @@ export function SalesClient({ companyId, companySlug, initialSales, sellers }: S
   const [loading, setLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
 
+  const salesBasePath = `/api/dashboard/${companySlug}/sales`;
+
   const fetchSales = useCallback(async (p: number, s: string, status: string) => {
     setLoading(true);
-    const result = await getSales(companyId, {
-      page: p,
-      search: s || undefined,
-      status: (status !== "ALL" ? status : undefined) as never,
-    });
-    setSales(result as never);
+    const params = new URLSearchParams();
+    params.set("page", String(p));
+    if (s) params.set("search", s);
+    if (status !== "ALL") params.set("status", status);
+    const response = await fetch(`${salesBasePath}?${params.toString()}`, { method: "GET" });
+    const result = await response.json();
+    if (!response.ok) {
+      toast.error(result.error ?? "Erro ao carregar vendas");
+      setLoading(false);
+      return;
+    }
+    setSales(result as SalesListResponse);
     setPage(p);
     setLoading(false);
-  }, [companyId]);
+  }, [salesBasePath]);
 
   function handleSearch(value: string) {
     setSearch(value);
@@ -99,17 +94,22 @@ export function SalesClient({ companyId, companySlug, initialSales, sellers }: S
 
   async function handleStatusChange(saleId: string, status: SaleStatus) {
     startTransition(async () => {
-      const result = await updateSaleStatus(companyId, saleId, status);
-      if (result.success) {
+      const response = await fetch(`${salesBasePath}/${saleId}/status`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ status }),
+      });
+      const result = await response.json();
+      if (response.ok) {
         toast.success("Status atualizado");
         fetchSales(page, search, statusFilter);
       } else {
-        toast.error(result.error);
+        toast.error(result.error ?? "Erro ao atualizar status");
       }
     });
   }
 
-  const columns: ColumnDef<SaleRow>[] = [
+  const columns: ColumnDef<SalesListItem>[] = [
     {
       accessorKey: "number",
       header: ({ column }) => (

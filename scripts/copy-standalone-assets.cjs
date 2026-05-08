@@ -2,6 +2,7 @@
  * Next.js `output: "standalone"` não empacota `.next/static` nem `public`.
  * Sem esta cópia, em produção os pedidos a `/_next/static/*` falham e o Tailwind/CSS não carrega.
  */
+/* eslint-disable @typescript-eslint/no-require-imports */
 const fs = require("fs");
 const path = require("path");
 

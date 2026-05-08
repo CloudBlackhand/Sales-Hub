@@ -1,9 +1,7 @@
 import type { Metadata } from "next";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
-import { db } from "@/lib/db";
 import { SettingsClient } from "./settings-client";
+import { requireDashboardContext } from "@/server/dashboard/context";
+import { db } from "@/lib/db";
 
 export const metadata: Metadata = { title: "Configurações" };
 
@@ -13,28 +11,28 @@ interface Props {
 
 export default async function SettingsPage({ params }: Props) {
   const { companySlug } = await params;
-  const session = await auth.api.getSession({ headers: await headers() });
-  if (!session) redirect("/login");
-
-  const company = await db.company.findUnique({
-    where: { slug: companySlug },
+  const { company } = await requireDashboardContext(companySlug);
+  const companyWithSettings = await db.company.findUnique({
+    where: { id: company.id },
     include: { settings: true },
   });
-  if (!company) redirect("/onboarding");
+  if (!companyWithSettings) {
+    return null;
+  }
 
-  const settingsPayload = company.settings
-    ? { id: company.settings.id, currency: company.settings.currency }
+  const settingsPayload = companyWithSettings.settings
+    ? { id: companyWithSettings.settings.id, currency: companyWithSettings.settings.currency }
     : null;
 
   const companyPayload = {
-    id: company.id,
-    name: company.name,
-    slug: company.slug,
-    cnpj: company.cnpj,
-    phone: company.phone,
-    email: company.email,
-    plan: company.plan,
+    id: companyWithSettings.id,
+    name: companyWithSettings.name,
+    slug: companyWithSettings.slug,
+    cnpj: companyWithSettings.cnpj,
+    phone: companyWithSettings.phone,
+    email: companyWithSettings.email,
+    plan: companyWithSettings.plan,
   };
 
-  return <SettingsClient company={companyPayload} settings={settingsPayload} />;
+  return <SettingsClient company={companyPayload} companySlug={companySlug} settings={settingsPayload} />;
 }

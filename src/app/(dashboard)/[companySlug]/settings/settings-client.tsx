@@ -4,7 +4,6 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { companySettingsSchema, type CompanySettingsInput } from "@/lib/schemas/company-settings";
-import { updateCompanyInfo } from "@/server/actions/settings";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -24,6 +23,7 @@ interface Props {
     email: string | null;
     plan: string;
   };
+  companySlug: string;
   settings: { id: string; currency: string; } | null;
 }
 
@@ -33,7 +33,7 @@ const planFeatures: Record<string, string[]> = {
   ENTERPRISE: ["Tudo do PRO", "API de integração", "SLA garantido", "Gerente de conta"],
 };
 
-export function SettingsClient({ company, settings }: Props) {
+export function SettingsClient({ company, companySlug, settings }: Props) {
   const [loading, setLoading] = useState(false);
 
   const form = useForm<CompanySettingsInput>({
@@ -48,9 +48,14 @@ export function SettingsClient({ company, settings }: Props) {
 
   async function onSubmit(values: CompanySettingsInput) {
     setLoading(true);
-    const r = await updateCompanyInfo(company.id, values);
-    if (r.success) toast.success("Configurações salvas");
-    else toast.error(r.error);
+    const response = await fetch(`/api/dashboard/${companySlug}/settings/company`, {
+      method: "PATCH",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(values),
+    });
+    const payload = await response.json();
+    if (response.ok) toast.success("Configurações salvas");
+    else toast.error(payload.error ?? "Erro ao atualizar configurações");
     setLoading(false);
   }
 

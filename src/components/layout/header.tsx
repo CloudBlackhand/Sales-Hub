@@ -16,7 +16,6 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Building2, ChevronsUpDown, LogOut, Plus, Shield, User } from "lucide-react";
-import Link from "next/link";
 import { toast } from "sonner";
 
 interface HeaderProps {

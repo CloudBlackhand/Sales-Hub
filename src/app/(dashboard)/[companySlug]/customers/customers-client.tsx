@@ -10,7 +10,7 @@ import {
   DropdownMenuTrigger, DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu";
 import { Customer } from "@/lib/prisma-types";
-import { getCustomers, deleteCustomer } from "@/server/actions/customers";
+import { CustomersListResponse } from "@/lib/dashboard/contracts";
 import { Plus, MoreHorizontal, Pencil, Trash2, Mail, Phone } from "lucide-react";
 import { toast } from "sonner";
 import { CustomerFormDialog } from "@/components/forms/customer-form-dialog";
@@ -18,29 +18,41 @@ import { formatDate } from "@/lib/utils";
 
 interface CustomersClientProps {
   companyId: string;
-  initialCustomers: { data: Customer[]; total: number; page: number; perPage: number };
+  companySlug: string;
+  initialCustomers: CustomersListResponse;
 }
 
-export function CustomersClient({ companyId, initialCustomers }: CustomersClientProps) {
+export function CustomersClient({ companyId, companySlug, initialCustomers }: CustomersClientProps) {
   const [customers, setCustomers] = useState(initialCustomers);
   const [page, setPage] = useState(initialCustomers.page);
   const [search, setSearch] = useState("");
   const [loading, setLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [editCustomer, setEditCustomer] = useState<Customer | null>(null);
+  const customersBasePath = `/api/dashboard/${companySlug}/customers`;
 
-  const fetch = useCallback(async (p: number, s: string) => {
+  const fetchCustomers = useCallback(async (p: number, s: string) => {
     setLoading(true);
-    const r = await getCustomers(companyId, { page: p, search: s || undefined });
+    const params = new URLSearchParams();
+    params.set("page", String(p));
+    if (s) params.set("search", s);
+    const response = await fetch(`${customersBasePath}?${params.toString()}`, { method: "GET" });
+    const r = await response.json();
+    if (!response.ok) {
+      toast.error(r.error ?? "Erro ao carregar clientes");
+      setLoading(false);
+      return;
+    }
     setCustomers(r);
     setPage(p);
     setLoading(false);
-  }, [companyId]);
+  }, [customersBasePath]);
 
   async function handleDelete(id: string) {
-    const r = await deleteCustomer(companyId, id);
-    if (r.success) { toast.success("Cliente excluído"); fetch(page, search); }
-    else toast.error(r.error);
+    const response = await fetch(`${customersBasePath}/${id}`, { method: "DELETE" });
+    const r = await response.json();
+    if (response.ok) { toast.success("Cliente excluído"); fetchCustomers(page, search); }
+    else toast.error(r.error ?? "Erro ao excluir cliente");
   }
 
   const columns: ColumnDef<Customer>[] = [
@@ -127,8 +139,8 @@ export function CustomersClient({ companyId, initialCustomers }: CustomersClient
         total={customers.total}
         page={page}
         perPage={customers.perPage}
-        onPageChange={(p) => fetch(p, search)}
-        onSearch={(s) => { setSearch(s); fetch(1, s); }}
+        onPageChange={(p) => fetchCustomers(p, search)}
+        onSearch={(s) => { setSearch(s); fetchCustomers(1, s); }}
         searchPlaceholder="Buscar por nome, e-mail, CPF/CNPJ..."
         loading={loading}
       />
@@ -138,7 +150,7 @@ export function CustomersClient({ companyId, initialCustomers }: CustomersClient
         onClose={() => { setDialogOpen(false); setEditCustomer(null); }}
         companyId={companyId}
         customer={editCustomer}
-        onSuccess={() => { setDialogOpen(false); setEditCustomer(null); fetch(page, search); }}
+        onSuccess={() => { setDialogOpen(false); setEditCustomer(null); fetchCustomers(page, search); }}
       />
     </div>
   );

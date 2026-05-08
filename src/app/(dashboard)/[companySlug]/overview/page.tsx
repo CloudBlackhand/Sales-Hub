@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
-import { headers } from "next/headers";
-import { redirect } from "next/navigation";
-import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { formatChartDayMonth, formatDate } from "@/lib/utils";
 import { getFinancialSummary } from "@/server/actions/financial";
 import { OverviewClient } from "./overview-client";
+import { requireDashboardContext } from "@/server/dashboard/context";
 
 export const metadata: Metadata = { title: "Visão Geral" };
 
@@ -15,11 +13,7 @@ interface Props {
 
 export default async function OverviewPage({ params }: Props) {
   const { companySlug } = await params;
-  const session = await auth.api.getSession({ headers: await headers() });
-  if (!session) redirect("/login");
-
-  const company = await db.company.findUnique({ where: { slug: companySlug } });
-  if (!company) redirect("/onboarding");
+  const { company } = await requireDashboardContext(companySlug);
 
   const now = new Date();
   const firstOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();

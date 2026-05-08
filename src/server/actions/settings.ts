@@ -11,11 +11,6 @@ import {
   type CompanyProfileInput,
 } from "@/lib/schemas/company-profile";
 
-export type { CompanySettingsInput };
-export { companySettingsSchema };
-export type { CompanyProfileInput };
-export { companyProfileSchema };
-
 export async function updateCompanyInfo(
   companyId: string,
   input: CompanySettingsInput

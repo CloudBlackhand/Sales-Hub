@@ -10,25 +10,16 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Seller, TransactionType, FinancialTransaction } from "@/lib/prisma-types";
-import { getTransactions, getCommissions, createTransaction, approveCommission, payCommission } from "@/server/actions/financial";
+import { FinancialTransaction } from "@/lib/prisma-types";
+import {
+  CommissionsListResponse,
+  CommissionListItem,
+  TransactionsListResponse,
+} from "@/lib/dashboard/contracts";
 import { Plus, MoreHorizontal, CheckCircle, DollarSign, TrendingUp, TrendingDown, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { TransactionFormDialog } from "@/components/forms/transaction-form-dialog";
-
-type CommissionRow = {
-  id: string;
-  baseAmount: unknown;
-  rate: unknown;
-  amount: unknown;
-  type: string;
-  status: string;
-  createdAt: Date;
-  paidAt: Date | null;
-  seller: { id: string; name: string; code: string };
-  sale: { id: string; number: number; saleDate: Date };
-};
 
 const commStatusColors: Record<string, string> = {
   PENDING: "bg-yellow-900 text-yellow-300",
@@ -58,13 +49,13 @@ const txTypeLabels: Record<string, string> = {
 
 interface Props {
   companyId: string;
-  initialTransactions: { data: FinancialTransaction[]; total: number; page: number; perPage: number };
-  initialCommissions: { data: CommissionRow[]; total: number; page: number; perPage: number };
+  companySlug: string;
+  initialTransactions: TransactionsListResponse;
+  initialCommissions: CommissionsListResponse;
   summary: { totalIncome: number; totalExpense: number; balance: number; commissionsPaid: number; commissionsPending: number };
-  sellers: Seller[];
 }
 
-export function FinancialClient({ companyId, initialTransactions, initialCommissions, summary, sellers }: Props) {
+export function FinancialClient({ companyId, companySlug, initialTransactions, initialCommissions, summary }: Props) {
   const [transactions, setTransactions] = useState(initialTransactions);
   const [commissions, setCommissions] = useState(initialCommissions);
   const [txPage, setTxPage] = useState(1);
@@ -72,23 +63,36 @@ export function FinancialClient({ companyId, initialTransactions, initialCommiss
   const [txLoading, setTxLoading] = useState(false);
   const [cmLoading, setCmLoading] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
-  const [isPending, startTransition] = useTransition();
+  const [, startTransition] = useTransition();
+  const financialBasePath = `/api/dashboard/${companySlug}/financial`;
 
   const fetchTx = useCallback(async (p: number) => {
     setTxLoading(true);
-    const r = await getTransactions(companyId, { page: p });
+    const response = await fetch(`${financialBasePath}/transactions?page=${p}`, { method: "GET" });
+    const r = await response.json();
+    if (!response.ok) {
+      toast.error(r.error ?? "Erro ao carregar lançamentos");
+      setTxLoading(false);
+      return;
+    }
     setTransactions(r);
     setTxPage(p);
     setTxLoading(false);
-  }, [companyId]);
+  }, [financialBasePath]);
 
   const fetchCm = useCallback(async (p: number) => {
     setCmLoading(true);
-    const r = await getCommissions(companyId, { page: p });
-    setCommissions(r as never);
+    const response = await fetch(`${financialBasePath}/commissions?page=${p}`, { method: "GET" });
+    const r = await response.json();
+    if (!response.ok) {
+      toast.error(r.error ?? "Erro ao carregar comissões");
+      setCmLoading(false);
+      return;
+    }
+    setCommissions(r as CommissionsListResponse);
     setCmPage(p);
     setCmLoading(false);
-  }, [companyId]);
+  }, [financialBasePath]);
 
   const summaryCards = [
     { label: "Receita total", value: formatCurrency(summary.totalIncome), icon: TrendingUp, color: "text-green-400", bg: "bg-green-900/20" },
@@ -105,7 +109,7 @@ export function FinancialClient({ companyId, initialTransactions, initialCommiss
     { accessorKey: "amount", header: "Valor", cell: ({ row }) => <span className={`font-medium ${row.original.type === "INCOME" ? "text-green-400" : "text-red-400"}`}>{formatCurrency(Number(row.original.amount))}</span> },
   ];
 
-  const cmColumns: ColumnDef<CommissionRow>[] = [
+  const cmColumns: ColumnDef<CommissionListItem>[] = [
     { accessorKey: "sale", header: "Venda", cell: ({ row }) => <span className="font-mono text-gray-300">#{row.original.sale.number}</span> },
     { accessorKey: "seller", header: "Vendedor", cell: ({ row }) => <div><p className="text-gray-200 text-sm">{row.original.seller.name}</p><p className="text-gray-500 text-xs">{row.original.seller.code}</p></div> },
     { accessorKey: "baseAmount", header: "Base", cell: ({ row }) => <span className="text-gray-400 text-sm">{formatCurrency(Number(row.original.baseAmount))}</span> },
@@ -124,13 +128,29 @@ export function FinancialClient({ companyId, initialTransactions, initialCommiss
           <DropdownMenuContent align="end" className="bg-gray-800 border-gray-700">
             {row.original.status === "PENDING" && (
               <DropdownMenuItem className="text-blue-400 focus:bg-gray-700 cursor-pointer"
-                onClick={() => startTransition(async () => { const r = await approveCommission(companyId, row.original.id); if (r.success) { toast.success("Comissão aprovada"); fetchCm(cmPage); } else toast.error(r.error); })}>
+                onClick={() => startTransition(async () => {
+                  const response = await fetch(
+                    `${financialBasePath}/commissions/${row.original.id}/approve`,
+                    { method: "POST" }
+                  );
+                  const r = await response.json();
+                  if (response.ok) { toast.success("Comissão aprovada"); fetchCm(cmPage); }
+                  else toast.error(r.error ?? "Erro ao aprovar comissão");
+                })}>
                 <CheckCircle className="w-4 h-4 mr-2" /> Aprovar
               </DropdownMenuItem>
             )}
             {row.original.status === "APPROVED" && (
               <DropdownMenuItem className="text-green-400 focus:bg-gray-700 cursor-pointer"
-                onClick={() => startTransition(async () => { const r = await payCommission(companyId, row.original.id); if (r.success) { toast.success("Comissão paga!"); fetchCm(cmPage); } else toast.error(r.error); })}>
+                onClick={() => startTransition(async () => {
+                  const response = await fetch(
+                    `${financialBasePath}/commissions/${row.original.id}/pay`,
+                    { method: "POST" }
+                  );
+                  const r = await response.json();
+                  if (response.ok) { toast.success("Comissão paga!"); fetchCm(cmPage); }
+                  else toast.error(r.error ?? "Erro ao pagar comissão");
+                })}>
                 <DollarSign className="w-4 h-4 mr-2" /> Registrar pagamento
               </DropdownMenuItem>
             )}
