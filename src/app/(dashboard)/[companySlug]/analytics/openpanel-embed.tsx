@@ -24,7 +24,7 @@ export function OpenPanelEmbed({ dashboardUrl }: Props) {
         <div className="flex min-w-0 items-center gap-2">
           <span className="text-sm font-semibold tracking-tight text-zinc-100">OpenPanel</span>
           <span className="hidden text-xs text-zinc-600 sm:inline">·</span>
-          <span className="hidden truncate text-xs text-zinc-500 sm:inline">Analytics em tempo real</span>
+          <span className="hidden truncate text-xs text-zinc-500 sm:inline">Métricas no OpenPanel</span>
           <button
             type="button"
             className="ml-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-md text-zinc-500 transition-colors hover:bg-zinc-900 hover:text-zinc-300"

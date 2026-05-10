@@ -10,11 +10,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { FinancialTransaction } from "@/lib/prisma-types";
 import {
   CommissionsListResponse,
   CommissionListItem,
   TransactionsListResponse,
+  TransactionListItem,
 } from "@/lib/dashboard/contracts";
 import { Plus, MoreHorizontal, CheckCircle, DollarSign, TrendingUp, TrendingDown, AlertCircle, CalendarDays, SlidersHorizontal } from "lucide-react";
 import { toast } from "sonner";
@@ -102,19 +102,19 @@ export function FinancialClient({ companyId, companySlug, initialTransactions, i
     { label: "Comissões pendentes", value: formatCurrency(summary.commissionsPending), icon: AlertCircle, color: "text-yellow-400", bg: "bg-yellow-900/20" },
   ];
 
-  const txColumns: ColumnDef<FinancialTransaction>[] = [
+  const txColumns: ColumnDef<TransactionListItem>[] = [
     { accessorKey: "date", header: "Data", cell: ({ row }) => <span className="text-gray-400 text-sm">{formatDate(row.original.date)}</span> },
     { accessorKey: "type", header: "Tipo", cell: ({ row }) => <Badge className={`${txTypeColors[row.original.type] ?? ""} border-0 text-xs`}>{txTypeLabels[row.original.type] ?? row.original.type}</Badge> },
     { accessorKey: "category", header: "Categoria", cell: ({ row }) => <span className="text-gray-400 text-sm">{row.original.category ?? "—"}</span> },
     { accessorKey: "description", header: "Descrição", cell: ({ row }) => <span className="text-gray-200 text-sm">{row.original.description ?? "—"}</span> },
-    { accessorKey: "amount", header: "Valor", cell: ({ row }) => <span className={`font-medium ${row.original.type === "INCOME" ? "text-green-400" : "text-red-400"}`}>{formatCurrency(Number(row.original.amount))}</span> },
+    { accessorKey: "amount", header: "Valor", cell: ({ row }) => <span className={`font-medium ${row.original.type === "INCOME" ? "text-green-400" : "text-red-400"}`}>{formatCurrency(row.original.amount)}</span> },
   ];
 
   const cmColumns: ColumnDef<CommissionListItem>[] = [
     { accessorKey: "sale", header: "Venda", cell: ({ row }) => <span className="font-mono text-gray-300">#{row.original.sale.number}</span> },
     { accessorKey: "seller", header: "Vendedor", cell: ({ row }) => <div><p className="text-gray-200 text-sm">{row.original.seller.name}</p><p className="text-gray-500 text-xs">{row.original.seller.code}</p></div> },
-    { accessorKey: "baseAmount", header: "Base", cell: ({ row }) => <span className="text-gray-400 text-sm">{formatCurrency(Number(row.original.baseAmount))}</span> },
-    { accessorKey: "amount", header: "Comissão", cell: ({ row }) => <span className="font-medium text-white">{formatCurrency(Number(row.original.amount))}</span> },
+    { accessorKey: "baseAmount", header: "Base", cell: ({ row }) => <span className="text-gray-400 text-sm">{formatCurrency(row.original.baseAmount)}</span> },
+    { accessorKey: "amount", header: "Comissão", cell: ({ row }) => <span className="font-medium text-white">{formatCurrency(row.original.amount)}</span> },
     { accessorKey: "status", header: "Status", cell: ({ row }) => <Badge className={`${commStatusColors[row.original.status] ?? ""} border-0 text-xs`}>{commStatusLabels[row.original.status] ?? row.original.status}</Badge> },
     { accessorKey: "createdAt", header: "Data", cell: ({ row }) => <span className="text-gray-500 text-sm">{formatDate(row.original.createdAt)}</span> },
     {

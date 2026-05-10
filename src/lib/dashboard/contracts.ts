@@ -1,4 +1,4 @@
-import { Customer, FinancialTransaction } from "@/lib/prisma-types";
+import type { Customer, FinancialTransaction } from "@/lib/prisma-types";
 
 export interface DashboardPageResult<T> {
   data: T[];
@@ -13,7 +13,7 @@ export interface SalesListItem {
   number: number;
   type: string;
   status: string;
-  totalAmount: unknown;
+  totalAmount: number;
   saleDate: Date;
   seller: { id: string; name: string; code: string };
   customer: { id: string; name: string } | null;
@@ -21,13 +21,17 @@ export interface SalesListItem {
 
 export type CustomersListResponse = DashboardPageResult<Customer>;
 export type SalesListResponse = DashboardPageResult<SalesListItem>;
-export type TransactionsListResponse = DashboardPageResult<FinancialTransaction>;
+
+/** Lançamento com valores monetários já convertidos para número (JSON/API). */
+export type TransactionListItem = Omit<FinancialTransaction, "amount"> & { amount: number };
+
+export type TransactionsListResponse = DashboardPageResult<TransactionListItem>;
 
 export interface CommissionListItem {
   id: string;
-  baseAmount: unknown;
-  rate: unknown;
-  amount: unknown;
+  baseAmount: number;
+  rate: number;
+  amount: number;
   type: string;
   status: string;
   createdAt: Date;

@@ -4,11 +4,13 @@ import { db } from "@/lib/db";
 import { ActionResult, PaginatedResult } from "@/types";
 import { FinancialTransaction, TransactionType } from "@/lib/prisma-types";
 import { transactionSchema, type TransactionInput } from "@/lib/schemas/financial";
+import { decimalToNumber } from "@/lib/decimal-json";
+import type { CommissionListItem, TransactionListItem } from "@/lib/dashboard/contracts";
 
 export async function getTransactions(
   companyId: string,
   params: { page?: number; perPage?: number; type?: TransactionType; from?: string; to?: string } = {}
-): Promise<PaginatedResult<FinancialTransaction>> {
+): Promise<PaginatedResult<TransactionListItem>> {
   const { page = 1, perPage = 20, type, from, to } = params;
   const skip = (page - 1) * perPage;
 
@@ -23,10 +25,15 @@ export async function getTransactions(
     } : {}),
   };
 
-  const [data, total] = await Promise.all([
+  const [rows, total] = await Promise.all([
     db.financialTransaction.findMany({ where, skip, take: perPage, orderBy: { date: "desc" } }),
     db.financialTransaction.count({ where }),
   ]);
+
+  const data: TransactionListItem[] = rows.map((row) => ({
+    ...row,
+    amount: decimalToNumber(row.amount),
+  }));
 
   return { data, total, page, perPage, totalPages: Math.ceil(total / perPage) };
 }
@@ -88,7 +95,7 @@ export async function getFinancialSummary(companyId: string, from?: string, to?:
 export async function getCommissions(
   companyId: string,
   params: { page?: number; perPage?: number; sellerId?: string; status?: string } = {}
-) {
+): Promise<PaginatedResult<CommissionListItem>> {
   const { page = 1, perPage = 20, sellerId, status } = params;
   const skip = (page - 1) * perPage;
 
@@ -98,7 +105,7 @@ export async function getCommissions(
     ...(status ? { status: status as "PENDING" | "APPROVED" | "PAID" | "CANCELLED" } : {}),
   };
 
-  const [data, total] = await Promise.all([
+  const [rows, total] = await Promise.all([
     db.commission.findMany({
       where,
       skip,
@@ -111,6 +118,13 @@ export async function getCommissions(
     }),
     db.commission.count({ where }),
   ]);
+
+  const data: CommissionListItem[] = rows.map((row) => ({
+    ...row,
+    baseAmount: decimalToNumber(row.baseAmount),
+    rate: decimalToNumber(row.rate),
+    amount: decimalToNumber(row.amount),
+  }));
 
   return { data, total, page, perPage, totalPages: Math.ceil(total / perPage) };
 }

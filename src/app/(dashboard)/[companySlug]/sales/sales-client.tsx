@@ -143,7 +143,7 @@ export function SalesClient({ companyId, companySlug, initialSales, sellers }: S
     {
       accessorKey: "totalAmount",
       header: "Valor",
-      cell: ({ row }) => <span className="font-medium text-white">{formatCurrency(Number(row.original.totalAmount))}</span>,
+      cell: ({ row }) => <span className="font-medium text-white">{formatCurrency(row.original.totalAmount)}</span>,
     },
     {
       accessorKey: "status",

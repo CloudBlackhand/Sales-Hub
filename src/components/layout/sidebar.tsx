@@ -3,28 +3,18 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
-  Activity,
-  BarChart3,
   ChartNoAxesCombined,
   ChevronLeft,
   ChevronRight,
-  Clock3,
-  Command,
   DollarSign,
-  FileText,
   LayoutDashboard,
-  Lightbulb,
   MessageSquare,
-  MousePointerClick,
   Package,
-  Plus,
-  Search,
   Settings,
   ShoppingCart,
   UserCheck,
   UserRound,
   Users,
-  UsersRound,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { MemberRole } from "@/lib/prisma-types";
@@ -42,21 +32,13 @@ interface NavItem {
 const navItems: NavItem[] = [
   { label: "Visão geral", href: "overview", icon: LayoutDashboard },
   { label: "Painéis", href: "analytics", icon: ChartNoAxesCombined, requiresOpenPanelUrl: true },
-  { label: "Análises", href: "overview", icon: Lightbulb },
-  { label: "Páginas", href: "sales", icon: FileText },
-  { label: "SEO", href: "products", icon: Search },
-  { label: "Tempo real", href: "overview", icon: Activity },
-  { label: "Eventos", href: "sales", icon: MousePointerClick },
-  { label: "Sessões", href: "post-sale", icon: Clock3 },
-  { label: "Perfis", href: "profile", icon: UserRound },
-  { label: "Grupos", href: "customers", icon: UsersRound },
   { label: "Vendas", href: "sales", icon: ShoppingCart },
   { label: "Clientes", href: "customers", icon: Users },
   { label: "Produtos", href: "products", icon: Package },
   { label: "Vendedores", href: "sellers", icon: UserCheck, roles: [MemberRole.OWNER, MemberRole.ADMIN, MemberRole.MANAGER] },
   { label: "Pós-venda", href: "post-sale", icon: MessageSquare },
   { label: "Financeiro", href: "financial", icon: DollarSign, roles: [MemberRole.OWNER, MemberRole.ADMIN] },
-  { label: "OpenPanel", href: "analytics", icon: BarChart3, roles: [MemberRole.OWNER, MemberRole.ADMIN], requiresOpenPanelUrl: true },
+  { label: "Perfil", href: "profile", icon: UserRound },
   { label: "Configurações", href: "settings", icon: Settings, roles: [MemberRole.OWNER, MemberRole.ADMIN] },
 ];
 
@@ -79,7 +61,7 @@ const preferredActiveLabelByRoute: Record<string, string> = {
   sellers: "Vendedores",
   "post-sale": "Pós-venda",
   financial: "Financeiro",
-  profile: "Perfis",
+  profile: "Perfil",
   settings: "Configurações",
 };
 
@@ -109,20 +91,6 @@ export function Sidebar({ companySlug, role }: SidebarProps) {
           </div>
           {!collapsed ? <span className="truncate text-sm font-semibold text-zinc-100">{companySlug}</span> : null}
         </div>
-
-        {!collapsed ? (
-          <div className="space-y-2.5 px-2.5 pt-2.5">
-            <button className="flex h-8 w-full items-center gap-2 rounded-md border border-zinc-800 bg-zinc-900 px-2 text-xs font-medium text-zinc-300 transition-colors hover:bg-zinc-800 hover:text-zinc-100">
-              <Plus className="h-3.5 w-3.5" />
-              Criar relatório
-            </button>
-            <div className="flex h-8 items-center gap-2 rounded-md border border-zinc-800 bg-zinc-900 px-2 text-zinc-500">
-              <Search className="h-3.5 w-3.5" />
-              <span className="text-xs">Pergunte à IA...</span>
-              <Command className="ml-auto h-3.5 w-3.5" />
-            </div>
-          </div>
-        ) : null}
 
         <nav className="flex-1 overflow-y-auto overflow-x-hidden py-2.5">
           <ul className="space-y-0.5 px-2.5">
@@ -167,16 +135,6 @@ export function Sidebar({ companySlug, role }: SidebarProps) {
             })}
           </ul>
         </nav>
-
-        {!collapsed ? (
-          <div className="border-t border-zinc-900 px-2.5 py-2 text-xs text-zinc-500">
-            <div className="mb-2">Enviar feedback</div>
-            <div className="flex items-center justify-between rounded-md border border-zinc-800 bg-zinc-900 px-2 py-1.5">
-              <span>Documentação</span>
-              <span className="text-zinc-400">Suporte</span>
-            </div>
-          </div>
-        ) : null}
 
         <button
           onClick={() => setCollapsed(!collapsed)}

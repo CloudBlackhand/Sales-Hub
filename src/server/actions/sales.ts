@@ -7,17 +7,21 @@ import { ActionResult, PaginatedResult } from "@/types";
 import { Sale, SaleStatus, SaleType, CommissionType } from "@/lib/prisma-types";
 import { saleSchema, type SaleInput } from "@/lib/schemas/sales";
 import { trackOpenPanelSaleCreated, trackOpenPanelSaleStatusUpdated } from "@/lib/openpanel-server";
+import { decimalToNumber } from "@/lib/decimal-json";
 
-type SaleWithRelations = Sale & {
+/** Venda com Decimals convertidos para number (RSC, API e cliente). */
+type SaleWithRelations = Omit<Sale, "totalAmount" | "discount"> & {
+  totalAmount: number;
+  discount: number;
   seller: { id: string; name: string; code: string };
   customer: { id: string; name: string } | null;
   items: Array<{
     id: string;
     description: string | null;
-    quantity: unknown;
-    unitPrice: unknown;
-    discount: unknown;
-    totalPrice: unknown;
+    quantity: number;
+    unitPrice: number;
+    discount: number;
+    totalPrice: number;
     product: { id: string; name: string } | null;
   }>;
 };
@@ -58,7 +62,7 @@ export async function getSales(
     } : {}),
   };
 
-  const [data, total] = await Promise.all([
+  const [rows, total] = await Promise.all([
     db.sale.findMany({
       where,
       skip,
@@ -75,7 +79,20 @@ export async function getSales(
     db.sale.count({ where }),
   ]);
 
-  return { data: data as SaleWithRelations[], total, page, perPage, totalPages: Math.ceil(total / perPage) };
+  const data: SaleWithRelations[] = rows.map((row) => ({
+    ...row,
+    totalAmount: decimalToNumber(row.totalAmount),
+    discount: decimalToNumber(row.discount),
+    items: row.items.map((item) => ({
+      ...item,
+      quantity: decimalToNumber(item.quantity),
+      unitPrice: decimalToNumber(item.unitPrice),
+      discount: decimalToNumber(item.discount),
+      totalPrice: decimalToNumber(item.totalPrice),
+    })),
+  }));
+
+  return { data, total, page, perPage, totalPages: Math.ceil(total / perPage) };
 }
 
 export async function getSaleById(companyId: string, saleId: string) {
