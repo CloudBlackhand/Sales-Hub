@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useCallback } from "react";
+import { Suspense, useState, useCallback } from "react";
+import { useSearchParams } from "next/navigation";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/tables/data-table";
 import { Button } from "@/components/ui/button";
@@ -11,19 +12,20 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Customer } from "@/lib/prisma-types";
 import { CustomersListResponse } from "@/lib/dashboard/contracts";
-import { Plus, MoreHorizontal, Pencil, Trash2, Mail, Phone, CalendarDays, SlidersHorizontal } from "lucide-react";
+import { Plus, MoreHorizontal, Pencil, Trash2, Mail, Phone } from "lucide-react";
 import { toast } from "sonner";
 import { CustomerFormDialog } from "@/components/forms/customer-form-dialog";
 import { formatDate } from "@/lib/utils";
-import { dashboardToolbar } from "@/lib/dashboard-ui-strings";
 
 interface CustomersClientProps {
   companyId: string;
   companySlug: string;
   initialCustomers: CustomersListResponse;
+  periodKey: string;
 }
 
-export function CustomersClient({ companyId, companySlug, initialCustomers }: CustomersClientProps) {
+function CustomersClientInner({ companyId, companySlug, initialCustomers }: CustomersClientProps) {
+  const searchParams = useSearchParams();
   const [customers, setCustomers] = useState(initialCustomers);
   const [page, setPage] = useState(initialCustomers.page);
   const [search, setSearch] = useState("");
@@ -32,22 +34,26 @@ export function CustomersClient({ companyId, companySlug, initialCustomers }: Cu
   const [editCustomer, setEditCustomer] = useState<Customer | null>(null);
   const customersBasePath = `/api/dashboard/${companySlug}/customers`;
 
-  const fetchCustomers = useCallback(async (p: number, s: string) => {
-    setLoading(true);
-    const params = new URLSearchParams();
-    params.set("page", String(p));
-    if (s) params.set("search", s);
-    const response = await fetch(`${customersBasePath}?${params.toString()}`, { method: "GET" });
-    const r = await response.json();
-    if (!response.ok) {
-      toast.error(r.error ?? "Erro ao carregar clientes");
+  const fetchCustomers = useCallback(
+    async (p: number, s: string) => {
+      setLoading(true);
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("page", String(p));
+      if (s) params.set("search", s);
+      else params.delete("search");
+      const response = await fetch(`${customersBasePath}?${params.toString()}`, { method: "GET" });
+      const r = await response.json();
+      if (!response.ok) {
+        toast.error(r.error ?? "Erro ao carregar clientes");
+        setLoading(false);
+        return;
+      }
+      setCustomers(r);
+      setPage(p);
       setLoading(false);
-      return;
-    }
-    setCustomers(r);
-    setPage(p);
-    setLoading(false);
-  }, [customersBasePath]);
+    },
+    [customersBasePath, searchParams]
+  );
 
   async function handleDelete(id: string) {
     const response = await fetch(`${customersBasePath}/${id}`, { method: "DELETE" });
@@ -124,20 +130,6 @@ export function CustomersClient({ companyId, companySlug, initialCustomers }: Cu
 
   return (
     <div className="space-y-4 p-4">
-      <div className="flex flex-wrap items-center gap-2">
-        <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
-          <CalendarDays className="mr-1.5 h-3.5 w-3.5" />
-          {dashboardToolbar.lastMonth}
-        </Button>
-        <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
-          {dashboardToolbar.day}
-        </Button>
-        <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
-          <SlidersHorizontal className="mr-1.5 h-3.5 w-3.5" />
-          {dashboardToolbar.filters}
-        </Button>
-      </div>
-
       <div className="flex items-center justify-between rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3">
         <div>
           <h1 className="text-lg font-semibold text-zinc-100">Clientes</h1>
@@ -168,5 +160,13 @@ export function CustomersClient({ companyId, companySlug, initialCustomers }: Cu
         onSuccess={() => { setDialogOpen(false); setEditCustomer(null); fetchCustomers(page, search); }}
       />
     </div>
+  );
+}
+
+export function CustomersClient(props: CustomersClientProps) {
+  return (
+    <Suspense fallback={<div className="p-4 text-xs text-zinc-500">Carregando clientes…</div>}>
+      <CustomersClientInner key={props.periodKey} {...props} />
+    </Suspense>
   );
 }

@@ -4,28 +4,45 @@ import { formatChartDayMonth, formatDate } from "@/lib/utils";
 import { getFinancialSummary } from "@/server/actions/financial";
 import { OverviewClient } from "./overview-client";
 import { requireDashboardContext } from "@/server/dashboard/context";
+import { resolveDashboardPeriod } from "@/lib/dashboard-period";
 
 export const metadata: Metadata = { title: "Visão Geral" };
 
 interface Props {
   params: Promise<{ companySlug: string }>;
+  searchParams: Promise<{ period?: string; from?: string; to?: string }>;
 }
 
-export default async function OverviewPage({ params }: Props) {
+export default async function OverviewPage({ params, searchParams }: Props) {
   const { companySlug } = await params;
+  const sp = await searchParams;
   const { company } = await requireDashboardContext(companySlug);
 
-  const now = new Date();
-  const firstOfMonth = new Date(now.getFullYear(), now.getMonth(), 1).toISOString();
-  const lastOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59).toISOString();
+  const { from: rangeFrom, to: rangeTo } = resolveDashboardPeriod(sp);
+  const fromIso = rangeFrom.toISOString();
+  const toIso = rangeTo.toISOString();
 
   const [summary, salesCount, customersCount, topSellers] = await Promise.all([
-    getFinancialSummary(company.id, firstOfMonth, lastOfMonth),
-    db.sale.count({ where: { companyId: company.id, status: { not: "CANCELLED" } } }),
-    db.customer.count({ where: { companyId: company.id } }),
+    getFinancialSummary(company.id, fromIso, toIso),
+    db.sale.count({
+      where: {
+        companyId: company.id,
+        status: { not: "CANCELLED" },
+        saleDate: { gte: rangeFrom, lte: rangeTo },
+      },
+    }),
+    db.customer.count({
+      where: {
+        companyId: company.id,
+        createdAt: { gte: rangeFrom, lte: rangeTo },
+      },
+    }),
     db.commission.groupBy({
       by: ["sellerId"],
-      where: { companyId: company.id },
+      where: {
+        companyId: company.id,
+        createdAt: { gte: rangeFrom, lte: rangeTo },
+      },
       _sum: { amount: true },
       orderBy: { _sum: { amount: "desc" } },
       take: 5,
@@ -45,7 +62,10 @@ export default async function OverviewPage({ params }: Props) {
   }));
 
   const recentSales = await db.sale.findMany({
-    where: { companyId: company.id },
+    where: {
+      companyId: company.id,
+      saleDate: { gte: rangeFrom, lte: rangeTo },
+    },
     orderBy: { createdAt: "desc" },
     take: 5,
     include: {
@@ -59,7 +79,7 @@ export default async function OverviewPage({ params }: Props) {
     where: {
       companyId: company.id,
       type: "INCOME",
-      date: { gte: new Date(firstOfMonth), lte: new Date(lastOfMonth) },
+      date: { gte: rangeFrom, lte: rangeTo },
     },
     _sum: { amount: true },
     orderBy: { date: "asc" },

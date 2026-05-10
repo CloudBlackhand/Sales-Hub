@@ -2,19 +2,8 @@
 
 import { formatCurrency } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import {
-  CalendarDays,
-  Filter,
-  Globe,
-  MousePointerClick,
-  Clock3,
-  Wallet,
-  ArrowRight,
-  TrendingUp,
-} from "lucide-react";
+import { Globe, MousePointerClick, Clock3, Wallet, ArrowRight, TrendingUp } from "lucide-react";
 import Link from "next/link";
-import { dashboardToolbar } from "@/lib/dashboard-ui-strings";
 import { OverviewRevenueChart } from "./overview-revenue-chart";
 
 interface OverviewClientProps {
@@ -107,32 +96,6 @@ export function OverviewClient({
 
   return (
     <div className="min-h-full space-y-4 bg-zinc-950 p-4">
-      <div className="flex flex-wrap items-center gap-2">
-        <Button
-          size="sm"
-          variant="outline"
-          className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100"
-        >
-          <CalendarDays className="mr-1.5 h-3.5 w-3.5" />
-          {dashboardToolbar.lastMonth}
-        </Button>
-        <Button
-          size="sm"
-          variant="outline"
-          className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100"
-        >
-          {dashboardToolbar.day}
-        </Button>
-        <Button
-          size="sm"
-          variant="outline"
-          className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100"
-        >
-          <Filter className="mr-1.5 h-3.5 w-3.5" />
-          {dashboardToolbar.filters}
-        </Button>
-      </div>
-
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-5">
         {kpis.map((kpi) => {
           const Icon = kpi.icon;
@@ -173,7 +136,7 @@ export function OverviewClient({
             <OverviewRevenueChart chartData={chartData} />
           ) : (
             <div className="flex h-[260px] items-center justify-center text-zinc-600">
-              Sem dados de receita este mês
+              Sem dados de receita neste período
             </div>
           )}
         </CardContent>

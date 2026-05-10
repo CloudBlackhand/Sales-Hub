@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useCallback, useTransition } from "react";
+import { Suspense, useState, useCallback, useTransition } from "react";
+import { useSearchParams } from "next/navigation";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/tables/data-table";
 import { Button } from "@/components/ui/button";
@@ -16,11 +17,10 @@ import {
   TransactionsListResponse,
   TransactionListItem,
 } from "@/lib/dashboard/contracts";
-import { Plus, MoreHorizontal, CheckCircle, DollarSign, TrendingUp, TrendingDown, AlertCircle, CalendarDays, SlidersHorizontal } from "lucide-react";
+import { Plus, MoreHorizontal, CheckCircle, DollarSign, TrendingUp, TrendingDown, AlertCircle } from "lucide-react";
 import { toast } from "sonner";
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { TransactionFormDialog } from "@/components/forms/transaction-form-dialog";
-import { dashboardToolbar } from "@/lib/dashboard-ui-strings";
 
 const commStatusColors: Record<string, string> = {
   PENDING: "bg-zinc-700 text-zinc-200",
@@ -54,9 +54,11 @@ interface Props {
   initialTransactions: TransactionsListResponse;
   initialCommissions: CommissionsListResponse;
   summary: { totalIncome: number; totalExpense: number; balance: number; commissionsPaid: number; commissionsPending: number };
+  periodKey: string;
 }
 
-export function FinancialClient({ companyId, companySlug, initialTransactions, initialCommissions, summary }: Props) {
+function FinancialClientInner({ companyId, companySlug, initialTransactions, initialCommissions, summary }: Props) {
+  const searchParams = useSearchParams();
   const [transactions, setTransactions] = useState(initialTransactions);
   const [commissions, setCommissions] = useState(initialCommissions);
   const [txPage, setTxPage] = useState(1);
@@ -67,33 +69,43 @@ export function FinancialClient({ companyId, companySlug, initialTransactions, i
   const [, startTransition] = useTransition();
   const financialBasePath = `/api/dashboard/${companySlug}/financial`;
 
-  const fetchTx = useCallback(async (p: number) => {
-    setTxLoading(true);
-    const response = await fetch(`${financialBasePath}/transactions?page=${p}`, { method: "GET" });
-    const r = await response.json();
-    if (!response.ok) {
-      toast.error(r.error ?? "Erro ao carregar lançamentos");
+  const fetchTx = useCallback(
+    async (p: number) => {
+      setTxLoading(true);
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("page", String(p));
+      const response = await fetch(`${financialBasePath}/transactions?${params.toString()}`, { method: "GET" });
+      const r = await response.json();
+      if (!response.ok) {
+        toast.error(r.error ?? "Erro ao carregar lançamentos");
+        setTxLoading(false);
+        return;
+      }
+      setTransactions(r);
+      setTxPage(p);
       setTxLoading(false);
-      return;
-    }
-    setTransactions(r);
-    setTxPage(p);
-    setTxLoading(false);
-  }, [financialBasePath]);
+    },
+    [financialBasePath, searchParams]
+  );
 
-  const fetchCm = useCallback(async (p: number) => {
-    setCmLoading(true);
-    const response = await fetch(`${financialBasePath}/commissions?page=${p}`, { method: "GET" });
-    const r = await response.json();
-    if (!response.ok) {
-      toast.error(r.error ?? "Erro ao carregar comissões");
+  const fetchCm = useCallback(
+    async (p: number) => {
+      setCmLoading(true);
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("page", String(p));
+      const response = await fetch(`${financialBasePath}/commissions?${params.toString()}`, { method: "GET" });
+      const r = await response.json();
+      if (!response.ok) {
+        toast.error(r.error ?? "Erro ao carregar comissões");
+        setCmLoading(false);
+        return;
+      }
+      setCommissions(r as CommissionsListResponse);
+      setCmPage(p);
       setCmLoading(false);
-      return;
-    }
-    setCommissions(r as CommissionsListResponse);
-    setCmPage(p);
-    setCmLoading(false);
-  }, [financialBasePath]);
+    },
+    [financialBasePath, searchParams]
+  );
 
   const summaryCards = [
     { label: "Receita total", value: formatCurrency(summary.totalIncome), icon: TrendingUp, color: "text-green-400", bg: "bg-green-900/20" },
@@ -163,20 +175,6 @@ export function FinancialClient({ companyId, companySlug, initialTransactions, i
 
   return (
     <div className="space-y-4 p-4">
-      <div className="flex flex-wrap items-center gap-2">
-        <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
-          <CalendarDays className="mr-1.5 h-3.5 w-3.5" />
-          {dashboardToolbar.lastMonth}
-        </Button>
-        <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
-          {dashboardToolbar.day}
-        </Button>
-        <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
-          <SlidersHorizontal className="mr-1.5 h-3.5 w-3.5" />
-          {dashboardToolbar.filters}
-        </Button>
-      </div>
-
       <div className="flex items-center justify-between rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3">
         <div>
           <h1 className="text-lg font-semibold text-zinc-100">Financeiro</h1>
@@ -230,5 +228,13 @@ export function FinancialClient({ companyId, companySlug, initialTransactions, i
         onSuccess={() => { setDialogOpen(false); fetchTx(1); toast.success("Lançamento criado!"); }}
       />
     </div>
+  );
+}
+
+export function FinancialClient(props: Props) {
+  return (
+    <Suspense fallback={<div className="p-4 text-xs text-zinc-500">Carregando financeiro…</div>}>
+      <FinancialClientInner key={props.periodKey} {...props} />
+    </Suspense>
   );
 }

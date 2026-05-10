@@ -10,9 +10,8 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
-import { Building2, CalendarDays, Loader2, Settings, Shield, SlidersHorizontal } from "lucide-react";
+import { Building2, Loader2, Settings, Shield } from "lucide-react";
 import { toast } from "sonner";
-import { dashboardToolbar } from "@/lib/dashboard-ui-strings";
 
 interface Props {
   company: {
@@ -62,20 +61,6 @@ export function SettingsClient({ company, companySlug, settings }: Props) {
 
   return (
     <div className="max-w-3xl space-y-4 p-4">
-      <div className="flex flex-wrap items-center gap-2">
-        <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
-          <CalendarDays className="mr-1.5 h-3.5 w-3.5" />
-          {dashboardToolbar.lastMonth}
-        </Button>
-        <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
-          {dashboardToolbar.day}
-        </Button>
-        <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
-          <SlidersHorizontal className="mr-1.5 h-3.5 w-3.5" />
-          {dashboardToolbar.filters}
-        </Button>
-      </div>
-
       <div className="rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3">
         <h1 className="text-lg font-semibold text-zinc-100">Configurações</h1>
         <p className="mt-1 text-xs text-zinc-500">Preferências da empresa e do plano</p>

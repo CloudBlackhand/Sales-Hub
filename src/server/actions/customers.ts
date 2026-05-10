@@ -7,13 +7,19 @@ import { customerSchema, type CustomerInput } from "@/lib/schemas/customers";
 
 export async function getCustomers(
   companyId: string,
-  params: { page?: number; perPage?: number; search?: string } = {}
+  params: { page?: number; perPage?: number; search?: string; from?: string; to?: string } = {}
 ): Promise<PaginatedResult<Customer>> {
-  const { page = 1, perPage = 20, search } = params;
+  const { page = 1, perPage = 20, search, from, to } = params;
   const skip = (page - 1) * perPage;
 
   const where = {
     companyId,
+    ...(from || to ? {
+      createdAt: {
+        ...(from ? { gte: new Date(from) } : {}),
+        ...(to ? { lte: new Date(to) } : {}),
+      },
+    } : {}),
     ...(search ? {
       OR: [
         { name: { contains: search, mode: "insensitive" as const } },

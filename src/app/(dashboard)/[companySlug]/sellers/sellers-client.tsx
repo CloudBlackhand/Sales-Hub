@@ -12,9 +12,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Seller, CommissionType } from "@/lib/prisma-types";
 import { getSellers, toggleSellerStatus } from "@/server/actions/sellers";
-import { Plus, MoreHorizontal, Pencil, PowerOff, CalendarDays, SlidersHorizontal } from "lucide-react";
+import { Plus, MoreHorizontal, Pencil, PowerOff } from "lucide-react";
 import { toast } from "sonner";
-import { dashboardToolbar } from "@/lib/dashboard-ui-strings";
 import { SellerFormDialog } from "@/components/forms/seller-form-dialog";
 import { formatCurrency } from "@/lib/utils";
 
@@ -133,20 +132,6 @@ export function SellersClient({ companyId, initialSellers }: SellersClientProps)
 
   return (
     <div className="space-y-4 p-4">
-      <div className="flex flex-wrap items-center gap-2">
-        <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
-          <CalendarDays className="mr-1.5 h-3.5 w-3.5" />
-          {dashboardToolbar.lastMonth}
-        </Button>
-        <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
-          {dashboardToolbar.day}
-        </Button>
-        <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
-          <SlidersHorizontal className="mr-1.5 h-3.5 w-3.5" />
-          {dashboardToolbar.filters}
-        </Button>
-      </div>
-
       <div className="flex items-center justify-between rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3">
         <div>
           <h1 className="text-lg font-semibold text-zinc-100">Vendedores</h1>

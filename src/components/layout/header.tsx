@@ -15,9 +15,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Building2, CalendarDays, ChevronsUpDown, LogOut, Plus, Shield, SlidersHorizontal, User } from "lucide-react";
+import { Building2, ChevronsUpDown, LogOut, Plus, Shield, User } from "lucide-react";
 import { toast } from "sonner";
-import { dashboardToolbar } from "@/lib/dashboard-ui-strings";
+import { DashboardPeriodToolbar } from "@/components/dashboard/dashboard-period-toolbar";
 
 interface HeaderProps {
   user: { id: string; name: string; email: string; image: string | null };
@@ -29,11 +29,6 @@ interface HeaderProps {
 
 export function Header({ user, company, companies, showSupervise }: HeaderProps) {
   const router = useRouter();
-  const controls = [
-    dashboardToolbar.lastMonth,
-    dashboardToolbar.day,
-    dashboardToolbar.filters,
-  ] as const;
 
   async function handleSignOut() {
     await signOut({
@@ -100,19 +95,8 @@ export function Header({ user, company, companies, showSupervise }: HeaderProps)
         </DropdownMenuContent>
       </DropdownMenu>
 
-      <div className="hidden items-center gap-1.5 md:flex">
-        {controls.map((item) => (
-          <Button
-            key={item}
-            size="sm"
-            variant="outline"
-            className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100"
-          >
-            {item === dashboardToolbar.lastMonth ? <CalendarDays className="mr-1.5 h-3.5 w-3.5" /> : null}
-            {item === dashboardToolbar.filters ? <SlidersHorizontal className="mr-1.5 h-3.5 w-3.5" /> : null}
-            {item}
-          </Button>
-        ))}
+      <div className="flex min-w-0 flex-1 justify-center overflow-x-auto px-1 sm:px-2">
+        <DashboardPeriodToolbar className="justify-center" />
       </div>
 
       {/* Supervisão global + plan badge + user */}

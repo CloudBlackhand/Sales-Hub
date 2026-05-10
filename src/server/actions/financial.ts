@@ -64,6 +64,13 @@ export async function getFinancialSummary(companyId: string, from?: string, to?:
     },
   } : {};
 
+  const commissionCreatedFilter = from || to ? {
+    createdAt: {
+      ...(from ? { gte: new Date(from) } : {}),
+      ...(to ? { lte: new Date(to) } : {}),
+    },
+  } : {};
+
   const [incomes, expenses, commissions, pendingCommissions] = await Promise.all([
     db.financialTransaction.aggregate({
       where: { companyId, type: TransactionType.INCOME, ...dateFilter },
@@ -74,11 +81,11 @@ export async function getFinancialSummary(companyId: string, from?: string, to?:
       _sum: { amount: true },
     }),
     db.commission.aggregate({
-      where: { companyId, status: "PAID" },
+      where: { companyId, status: "PAID", ...commissionCreatedFilter },
       _sum: { amount: true },
     }),
     db.commission.aggregate({
-      where: { companyId, status: { in: ["PENDING", "APPROVED"] } },
+      where: { companyId, status: { in: ["PENDING", "APPROVED"] }, ...commissionCreatedFilter },
       _sum: { amount: true },
     }),
   ]);
@@ -94,15 +101,28 @@ export async function getFinancialSummary(companyId: string, from?: string, to?:
 
 export async function getCommissions(
   companyId: string,
-  params: { page?: number; perPage?: number; sellerId?: string; status?: string } = {}
+  params: {
+    page?: number;
+    perPage?: number;
+    sellerId?: string;
+    status?: string;
+    from?: string;
+    to?: string;
+  } = {}
 ): Promise<PaginatedResult<CommissionListItem>> {
-  const { page = 1, perPage = 20, sellerId, status } = params;
+  const { page = 1, perPage = 20, sellerId, status, from, to } = params;
   const skip = (page - 1) * perPage;
 
   const where = {
     companyId,
     ...(sellerId ? { sellerId } : {}),
     ...(status ? { status: status as "PENDING" | "APPROVED" | "PAID" | "CANCELLED" } : {}),
+    ...(from || to ? {
+      createdAt: {
+        ...(from ? { gte: new Date(from) } : {}),
+        ...(to ? { lte: new Date(to) } : {}),
+      },
+    } : {}),
   };
 
   const [rows, total] = await Promise.all([

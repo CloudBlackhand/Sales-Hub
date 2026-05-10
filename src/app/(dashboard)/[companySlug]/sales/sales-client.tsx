@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useTransition, useCallback } from "react";
+import { Suspense, useState, useTransition, useCallback } from "react";
+import { useSearchParams } from "next/navigation";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTable } from "@/components/tables/data-table";
 import { Button } from "@/components/ui/button";
@@ -18,10 +19,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { formatCurrency, formatDate } from "@/lib/utils";
 import { Seller, SaleStatus } from "@/lib/prisma-types";
 import { SalesListItem, SalesListResponse } from "@/lib/dashboard/contracts";
-import { Plus, MoreHorizontal, Eye, CheckCircle, XCircle, Truck, ArrowUpDown, CalendarDays, SlidersHorizontal } from "lucide-react";
+import { Plus, MoreHorizontal, Eye, CheckCircle, XCircle, Truck, ArrowUpDown } from "lucide-react";
 import { toast } from "sonner";
 import { SaleFormDialog } from "@/components/forms/sale-form-dialog";
-import { dashboardToolbar } from "@/lib/dashboard-ui-strings";
 
 const statusColors: Record<string, string> = {
   DRAFT: "bg-zinc-800 text-zinc-300",
@@ -52,9 +52,12 @@ interface SalesClientProps {
   companySlug: string;
   initialSales: SalesListResponse;
   sellers: Seller[];
+  /** Muda quando o intervalo de datas na URL muda — força estado alinhado ao servidor */
+  periodKey: string;
 }
 
-export function SalesClient({ companyId, companySlug, initialSales, sellers }: SalesClientProps) {
+function SalesClientInner({ companyId, companySlug, initialSales, sellers }: SalesClientProps) {
+  const searchParams = useSearchParams();
   const [, startTransition] = useTransition();
   const [sales, setSales] = useState(initialSales);
   const [page, setPage] = useState(initialSales.page);
@@ -65,23 +68,28 @@ export function SalesClient({ companyId, companySlug, initialSales, sellers }: S
 
   const salesBasePath = `/api/dashboard/${companySlug}/sales`;
 
-  const fetchSales = useCallback(async (p: number, s: string, status: string) => {
-    setLoading(true);
-    const params = new URLSearchParams();
-    params.set("page", String(p));
-    if (s) params.set("search", s);
-    if (status !== "ALL") params.set("status", status);
-    const response = await fetch(`${salesBasePath}?${params.toString()}`, { method: "GET" });
-    const result = await response.json();
-    if (!response.ok) {
-      toast.error(result.error ?? "Erro ao carregar vendas");
+  const fetchSales = useCallback(
+    async (p: number, s: string, status: string) => {
+      setLoading(true);
+      const params = new URLSearchParams(searchParams.toString());
+      params.set("page", String(p));
+      if (s) params.set("search", s);
+      else params.delete("search");
+      if (status !== "ALL") params.set("status", status);
+      else params.delete("status");
+      const response = await fetch(`${salesBasePath}?${params.toString()}`, { method: "GET" });
+      const result = await response.json();
+      if (!response.ok) {
+        toast.error(result.error ?? "Erro ao carregar vendas");
+        setLoading(false);
+        return;
+      }
+      setSales(result as SalesListResponse);
+      setPage(p);
       setLoading(false);
-      return;
-    }
-    setSales(result as SalesListResponse);
-    setPage(p);
-    setLoading(false);
-  }, [salesBasePath]);
+    },
+    [salesBasePath, searchParams]
+  );
 
   function handleSearch(value: string) {
     setSearch(value);
@@ -208,20 +216,6 @@ export function SalesClient({ companyId, companySlug, initialSales, sellers }: S
 
   return (
     <div className="space-y-4 p-4">
-      <div className="flex flex-wrap items-center gap-2">
-        <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
-          <CalendarDays className="mr-1.5 h-3.5 w-3.5" />
-          {dashboardToolbar.lastMonth}
-        </Button>
-        <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
-          {dashboardToolbar.day}
-        </Button>
-        <Button size="sm" variant="outline" className="h-8 border-zinc-800 bg-zinc-900 px-2.5 text-xs text-zinc-300 hover:bg-zinc-800 hover:text-zinc-100">
-          <SlidersHorizontal className="mr-1.5 h-3.5 w-3.5" />
-          {dashboardToolbar.filters}
-        </Button>
-      </div>
-
       <div className="flex items-center justify-between rounded-xl border border-zinc-800 bg-zinc-950 px-4 py-3">
         <div>
           <h1 className="text-lg font-semibold text-zinc-100">Vendas</h1>
@@ -272,5 +266,13 @@ export function SalesClient({ companyId, companySlug, initialSales, sellers }: S
         }}
       />
     </div>
+  );
+}
+
+export function SalesClient(props: SalesClientProps) {
+  return (
+    <Suspense fallback={<div className="p-4 text-xs text-zinc-500">Carregando vendas…</div>}>
+      <SalesClientInner key={props.periodKey} {...props} />
+    </Suspense>
   );
 }
