@@ -39,13 +39,13 @@ export default async function DashboardLayout({ children, params }: DashboardLay
       ) : null}
       <Sidebar companySlug={companySlug} role={membership.role} />
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
+        {isDemoReadOnlyEnv() ? <DemoReadOnlyBanner /> : null}
         <Header
           user={{ id: session.user.id, name: session.user.name, email: session.user.email, image: session.user.image ?? null }}
           company={company}
           companies={companies}
           showSupervise={showSupervise}
         />
-        {isDemoReadOnlyEnv() ? <DemoReadOnlyBanner /> : null}
         <main className="flex min-h-0 flex-1 flex-col overflow-y-auto overflow-x-hidden bg-zinc-950">
           {children}
         </main>
