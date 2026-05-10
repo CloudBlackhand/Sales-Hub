@@ -2,7 +2,7 @@
 
 import { formatCurrency } from "@/lib/utils";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Globe, MousePointerClick, Clock3, Wallet, ArrowRight, TrendingUp } from "lucide-react";
+import { ArrowRight, Landmark, ShoppingBag, TrendingDown, Users, Wallet } from "lucide-react";
 import Link from "next/link";
 import { OverviewRevenueChart } from "./overview-revenue-chart";
 
@@ -44,83 +44,47 @@ export function OverviewClient({
   chartData,
   companySlug,
 }: OverviewClientProps) {
-  const sparkBars = [7, 9, 8, 10, 12, 11, 13, 14, 12, 15, 13, 16];
-  const refsRows = (topSellers.length > 0
-    ? topSellers.slice(0, 6).map((seller, index) => ({
-        name: seller.seller?.name ?? `Ref ${index + 1}`,
-        views: Math.max(1, Math.round(seller.amount / 120)),
-        sessions: Math.max(1, Math.round(seller.amount / 150)),
-      }))
-    : recentSales.slice(0, 6).map((sale) => ({
-        name: sale.customerName ?? "Direto / não informado",
-        views: Math.max(1, Math.round(sale.totalAmount / 120)),
-        sessions: Math.max(1, Math.round(sale.totalAmount / 150)),
-      })));
-  const pagesRows = recentSales.slice(0, 6).map((sale) => ({
-    path: `/sales/${sale.number}`,
-    views: Math.max(1, Math.round(sale.totalAmount / 100)),
-    sessions: Math.max(1, Math.round(sale.totalAmount / 130)),
-  }));
   const kpis = [
     {
-      label: "Visitantes únicos",
+      label: "Vendas no período",
+      value: salesCount.toLocaleString("pt-BR"),
+      icon: ShoppingBag,
+    },
+    {
+      label: "Novos clientes",
       value: customersCount.toLocaleString("pt-BR"),
-      icon: Globe,
-      delta: "+0.7%",
-    },
-    {
-      label: "Vendas",
-      value: salesCount.toString(),
-      icon: MousePointerClick,
-      delta: "+0.9%",
-    },
-    {
-      label: "Visualizações",
-      value: Math.max(salesCount * 4, customersCount * 3).toLocaleString("pt-BR"),
-      icon: TrendingUp,
-      delta: "+0.6%",
-    },
-    {
-      label: "Tempo da sessão",
-      value: "18s",
-      icon: Clock3,
-      delta: "+0.1%",
+      icon: Users,
     },
     {
       label: "Receita",
       value: formatCurrency(summary.totalIncome),
       icon: Wallet,
-      delta: summary.totalIncome > 0 ? "+0.5%" : "0.0%",
+    },
+    {
+      label: "Despesas",
+      value: formatCurrency(summary.totalExpense),
+      icon: TrendingDown,
+    },
+    {
+      label: "Saldo",
+      value: formatCurrency(summary.balance),
+      icon: Landmark,
     },
   ];
 
   return (
     <div className="min-h-full space-y-4 bg-zinc-950 p-4">
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-2 xl:grid-cols-5">
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-5">
         {kpis.map((kpi) => {
           const Icon = kpi.icon;
           return (
             <Card key={kpi.label} className="gap-2 border border-zinc-800 bg-zinc-950 py-3 shadow-none">
               <CardContent className="space-y-2 px-3">
-                <div className="flex items-center justify-between">
+                <div className="flex items-center justify-between gap-2">
                   <p className="text-[11px] uppercase tracking-wide text-zinc-500">{kpi.label}</p>
-                  <span className="text-[11px] text-emerald-400">{kpi.delta}</span>
+                  <Icon className="h-4 w-4 shrink-0 text-zinc-500" />
                 </div>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-2xl font-semibold text-zinc-100">{kpi.value}</p>
-                  </div>
-                  <Icon className="h-4 w-4 text-zinc-500" />
-                </div>
-                <div className="flex items-end gap-0.5">
-                  {sparkBars.map((v, index) => (
-                    <span
-                      key={`${kpi.label}-${index}`}
-                      className="w-1 rounded-sm bg-emerald-500/70"
-                      style={{ height: `${Math.max(4, v)}px` }}
-                    />
-                  ))}
-                </div>
+                <p className="text-2xl font-semibold tabular-nums text-zinc-100">{kpi.value}</p>
               </CardContent>
             </Card>
           );
@@ -145,55 +109,70 @@ export function OverviewClient({
       <div className="grid grid-cols-1 gap-3 xl:grid-cols-2">
         <Card className="border border-zinc-800 bg-zinc-950 py-2 shadow-none">
           <CardHeader className="pb-1">
-            <CardTitle className="text-sm font-medium text-zinc-200">Principais origens</CardTitle>
+            <CardTitle className="text-sm font-medium text-zinc-200">Top vendedores (comissão no período)</CardTitle>
           </CardHeader>
           <CardContent>
-            {refsRows.length > 0 ? (
+            {topSellers.length > 0 ? (
               <div className="space-y-1">
-                <div className="grid grid-cols-[1fr_70px_70px] gap-2 border-b border-zinc-800 px-2 py-1 text-[11px] uppercase tracking-wide text-zinc-500">
-                  <span>Origem</span>
-                  <span className="text-right">Visualizações</span>
-                  <span className="text-right">Sessões</span>
+                <div className="grid grid-cols-[1fr_auto] gap-2 border-b border-zinc-800 px-2 py-1 text-[11px] uppercase tracking-wide text-zinc-500">
+                  <span>Vendedor</span>
+                  <span className="text-right">Comissão</span>
                 </div>
-                {refsRows.map((row, i) => (
-                  <div key={`${row.name}-${i}`} className="grid grid-cols-[1fr_70px_70px] items-center gap-2 rounded-md px-2 py-1.5 text-xs hover:bg-zinc-900">
-                    <span className="truncate text-zinc-300">{row.name}</span>
-                    <span className="text-right text-zinc-400">{row.views.toLocaleString("pt-BR")}</span>
-                    <span className="text-right text-zinc-400">{row.sessions.toLocaleString("pt-BR")}</span>
+                {topSellers.slice(0, 8).map((row) => (
+                  <div
+                    key={row.sellerId}
+                    className="grid grid-cols-[1fr_auto] items-center gap-2 rounded-md px-2 py-1.5 text-xs"
+                  >
+                    <span className="truncate text-zinc-300">
+                      {row.seller?.name ?? "—"}{" "}
+                      {row.seller?.code ? (
+                        <span className="text-zinc-600">({row.seller.code})</span>
+                      ) : null}
+                    </span>
+                    <span className="text-right font-medium tabular-nums text-zinc-200">
+                      {formatCurrency(row.amount)}
+                    </span>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="py-8 text-center text-sm text-zinc-600">Sem dados</p>
+              <p className="py-8 text-center text-sm text-zinc-600">Sem comissões neste período</p>
             )}
           </CardContent>
         </Card>
+
         <Card className="border border-zinc-800 bg-zinc-950 py-2 shadow-none">
           <CardHeader className="pb-1">
-            <CardTitle className="text-sm font-medium text-zinc-200">Principais caminhos</CardTitle>
+            <CardTitle className="text-sm font-medium text-zinc-200">Últimas vendas</CardTitle>
           </CardHeader>
           <CardContent>
-            {pagesRows.length > 0 ? (
+            {recentSales.length > 0 ? (
               <div className="space-y-1">
-                <div className="grid grid-cols-[1fr_70px_70px] gap-2 border-b border-zinc-800 px-2 py-1 text-[11px] uppercase tracking-wide text-zinc-500">
-                  <span>Caminho</span>
-                  <span className="text-right">Visualizações</span>
-                  <span className="text-right">Sessões</span>
+                <div className="grid grid-cols-[auto_1fr_auto_auto] gap-2 border-b border-zinc-800 px-2 py-1 text-[11px] uppercase tracking-wide text-zinc-500">
+                  <span>#</span>
+                  <span>Cliente</span>
+                  <span className="text-right">Valor</span>
+                  <span className="text-right">Data</span>
                 </div>
-                {pagesRows.map((row, i) => (
-                  <div key={`${row.path}-${i}`} className="grid grid-cols-[1fr_70px_70px] items-center gap-2 rounded-md px-2 py-1.5 text-xs hover:bg-zinc-900">
-                    <span className="truncate text-zinc-300">{row.path}</span>
-                    <span className="text-right text-zinc-400">{row.views.toLocaleString("pt-BR")}</span>
-                    <span className="text-right text-zinc-400">{row.sessions.toLocaleString("pt-BR")}</span>
+                {recentSales.map((sale) => (
+                  <div
+                    key={sale.id}
+                    className="grid grid-cols-[auto_1fr_auto_auto] items-center gap-2 rounded-md px-2 py-1.5 text-xs"
+                  >
+                    <span className="font-mono text-zinc-400">#{sale.number}</span>
+                    <span className="truncate text-zinc-300">{sale.customerName ?? "—"}</span>
+                    <span className="text-right tabular-nums text-zinc-200">{formatCurrency(sale.totalAmount)}</span>
+                    <span className="text-right text-zinc-500">{sale.saleDateLabel}</span>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="py-8 text-center text-sm text-zinc-600">Sem dados</p>
+              <p className="py-8 text-center text-sm text-zinc-600">Sem vendas neste período</p>
             )}
           </CardContent>
         </Card>
       </div>
+
       <div className="flex justify-end">
         <Link
           href={`/${companySlug}/sales`}

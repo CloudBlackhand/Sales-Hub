@@ -27,12 +27,6 @@ interface Props {
   settings: { id: string; currency: string; } | null;
 }
 
-const planFeatures: Record<string, string[]> = {
-  FREE: ["Até 3 vendedores", "100 vendas/mês", "Suporte por e-mail"],
-  PRO: ["Vendedores ilimitados", "Vendas ilimitadas", "Suporte prioritário", "Relatórios avançados"],
-  ENTERPRISE: ["Tudo do PRO", "API de integração", "SLA garantido", "Gerente de conta"],
-};
-
 export function SettingsClient({ company, companySlug, settings }: Props) {
   const [loading, setLoading] = useState(false);
 
@@ -120,28 +114,23 @@ export function SettingsClient({ company, companySlug, settings }: Props) {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="flex items-center gap-3">
-            <Badge className={`border-0 px-3 py-1 text-sm ${
-              company.plan === "ENTERPRISE" ? "bg-zinc-100 text-zinc-900" :
-              company.plan === "PRO" ? "bg-zinc-200 text-zinc-900" :
-              "bg-zinc-700 text-zinc-300"
-            }`}>
+            <Badge
+              className={`border-0 px-3 py-1 text-sm ${
+                company.plan === "ENTERPRISE"
+                  ? "bg-zinc-100 text-zinc-900"
+                  : company.plan === "PRO"
+                    ? "bg-zinc-200 text-zinc-900"
+                    : "bg-zinc-700 text-zinc-300"
+              }`}
+            >
               {company.plan}
             </Badge>
-            {company.plan !== "ENTERPRISE" && (
-              <Button size="sm" className="h-8 bg-zinc-100 text-zinc-900 hover:bg-zinc-200">
-                Fazer upgrade
-              </Button>
-            )}
           </div>
           <Separator className="bg-zinc-800" />
-          <ul className="space-y-2">
-            {(planFeatures[company.plan] ?? planFeatures.FREE).map((f) => (
-              <li key={f} className="flex items-center gap-2 text-sm text-gray-300">
-                <div className="h-1.5 w-1.5 rounded-full bg-zinc-300" />
-                {f}
-              </li>
-            ))}
-          </ul>
+          <p className="text-sm leading-relaxed text-zinc-500">
+            Etiqueta de plano para demonstração. Pagamentos, upgrades e limites por plano não estão ligados a billing neste{" "}
+            projeto.
+          </p>
         </CardContent>
       </Card>
 

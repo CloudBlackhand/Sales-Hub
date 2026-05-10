@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Building2, ChevronsUpDown, LogOut, Plus, Shield, User } from "lucide-react";
+import { Building2, ChevronsUpDown, LogOut, Plus, Settings, Shield, User } from "lucide-react";
 import { toast } from "sonner";
 import { DashboardPeriodToolbar } from "@/components/dashboard/dashboard-period-toolbar";
 
@@ -145,10 +145,17 @@ export function Header({ user, company, companies, showSupervise }: HeaderProps)
             ) : null}
             <DropdownMenuItem
               className="cursor-pointer focus:bg-gray-700 text-gray-300"
-              onClick={() => router.push(`/${company.slug}/settings`)}
+              onClick={() => router.push(`/${company.slug}/profile`)}
             >
               <User className="w-4 h-4 mr-2" />
-              Perfil
+              Perfil da empresa
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="cursor-pointer focus:bg-gray-700 text-gray-300"
+              onClick={() => router.push(`/${company.slug}/settings`)}
+            >
+              <Settings className="w-4 h-4 mr-2" />
+              Configurações
             </DropdownMenuItem>
             <DropdownMenuSeparator className="bg-gray-700" />
             <DropdownMenuItem
