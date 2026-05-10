@@ -1,6 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
+import { formatServerActionError } from "@/lib/demo-read-only";
 import { ActionResult } from "@/types";
 import {
   companySettingsSchema,
@@ -20,8 +21,8 @@ export async function updateCompanyInfo(
     if (!parsed.success) return { success: false, error: parsed.error.issues[0]?.message ?? "Erro de validação" };
     await db.company.update({ where: { id: companyId }, data: parsed.data });
     return { success: true };
-  } catch {
-    return { success: false, error: "Erro ao atualizar" };
+  } catch (error) {
+    return { success: false, error: formatServerActionError(error, "Erro ao atualizar") };
   }
 }
 
@@ -90,7 +91,7 @@ export async function updateCompanyProfile(
     });
 
     return { success: true };
-  } catch {
-    return { success: false, error: "Erro ao atualizar perfil da empresa" };
+  } catch (error) {
+    return { success: false, error: formatServerActionError(error, "Erro ao atualizar perfil da empresa") };
   }
 }

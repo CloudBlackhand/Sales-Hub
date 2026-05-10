@@ -1,6 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
+import { formatServerActionError } from "@/lib/demo-read-only";
 import { ActionResult, PaginatedResult } from "@/types";
 import { PostSaleActivity, ActivityStatus } from "@/lib/prisma-types";
 import { postSaleSchema, type PostSaleInput } from "@/lib/schemas/post-sale";
@@ -61,7 +62,7 @@ export async function createPostSaleActivity(
     return { success: true, data: activity };
   } catch (error) {
     console.error("[createPostSaleActivity]", error);
-    return { success: false, error: "Erro ao criar atividade" };
+    return { success: false, error: formatServerActionError(error, "Erro ao criar atividade") };
   }
 }
 
@@ -82,7 +83,7 @@ export async function updateActivityStatus(
       },
     });
     return { success: true };
-  } catch {
-    return { success: false, error: "Erro ao atualizar status" };
+  } catch (error) {
+    return { success: false, error: formatServerActionError(error, "Erro ao atualizar status") };
   }
 }

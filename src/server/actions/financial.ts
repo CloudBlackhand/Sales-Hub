@@ -1,6 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
+import { formatServerActionError } from "@/lib/demo-read-only";
 import { ActionResult, PaginatedResult } from "@/types";
 import { FinancialTransaction, TransactionType } from "@/lib/prisma-types";
 import { transactionSchema, type TransactionInput } from "@/lib/schemas/financial";
@@ -52,7 +53,7 @@ export async function createTransaction(
     return { success: true, data: transaction };
   } catch (error) {
     console.error("[createTransaction]", error);
-    return { success: false, error: "Erro ao criar lançamento" };
+    return { success: false, error: formatServerActionError(error, "Erro ao criar lançamento") };
   }
 }
 
@@ -155,8 +156,8 @@ export async function approveCommission(companyId: string, commissionId: string)
     if (!commission) return { success: false, error: "Comissão não encontrada" };
     await db.commission.update({ where: { id: commissionId }, data: { status: "APPROVED" } });
     return { success: true };
-  } catch {
-    return { success: false, error: "Erro ao aprovar comissão" };
+  } catch (error) {
+    return { success: false, error: formatServerActionError(error, "Erro ao aprovar comissão") };
   }
 }
 
@@ -185,7 +186,7 @@ export async function payCommission(companyId: string, commissionId: string): Pr
     ]);
 
     return { success: true };
-  } catch {
-    return { success: false, error: "Erro ao pagar comissão" };
+  } catch (error) {
+    return { success: false, error: formatServerActionError(error, "Erro ao pagar comissão") };
   }
 }

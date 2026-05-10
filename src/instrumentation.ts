@@ -23,7 +23,8 @@ export async function register() {
     if (exists) return;
 
     console.log("[auto-demo-seed] Sem utilizador demo nesta base — a executar runDemoSeed()");
-    await runDemoSeed(db);
+    const { runWithPrismaWriteBypass } = await import("@/lib/demo-read-only");
+    await runWithPrismaWriteBypass(() => runDemoSeed(db));
     console.log("[auto-demo-seed] Concluído.");
   } catch (e: unknown) {
     const code =

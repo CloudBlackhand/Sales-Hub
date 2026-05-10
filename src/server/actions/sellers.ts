@@ -1,6 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
+import { formatServerActionError } from "@/lib/demo-read-only";
 import { ActionResult, PaginatedResult } from "@/types";
 import { Seller } from "@/lib/prisma-types";
 import { sellerSchema, type SellerInput } from "@/lib/schemas/sellers";
@@ -56,7 +57,7 @@ export async function createSeller(
     return { success: true, data: seller };
   } catch (error) {
     console.error("[createSeller]", error);
-    return { success: false, error: "Erro ao criar vendedor" };
+    return { success: false, error: formatServerActionError(error, "Erro ao criar vendedor") };
   }
 }
 
@@ -84,7 +85,7 @@ export async function updateSeller(
     return { success: true, data: updated };
   } catch (error) {
     console.error("[updateSeller]", error);
-    return { success: false, error: "Erro ao atualizar vendedor" };
+    return { success: false, error: formatServerActionError(error, "Erro ao atualizar vendedor") };
   }
 }
 
@@ -97,7 +98,7 @@ export async function toggleSellerStatus(
     if (!seller) return { success: false, error: "Vendedor não encontrado" };
     await db.seller.update({ where: { id: sellerId }, data: { isActive: !seller.isActive } });
     return { success: true };
-  } catch {
-    return { success: false, error: "Erro ao alterar status" };
+  } catch (error) {
+    return { success: false, error: formatServerActionError(error, "Erro ao alterar status") };
   }
 }

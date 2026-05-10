@@ -1,6 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
+import { formatServerActionError } from "@/lib/demo-read-only";
 import { ActionResult, PaginatedResult } from "@/types";
 import { Product, ProductType } from "@/lib/prisma-types";
 import { productSchema, type ProductInput } from "@/lib/schemas/products";
@@ -52,7 +53,7 @@ export async function createProduct(
     return { success: true, data: product };
   } catch (error) {
     console.error("[createProduct]", error);
-    return { success: false, error: "Erro ao criar produto" };
+    return { success: false, error: formatServerActionError(error, "Erro ao criar produto") };
   }
 }
 
@@ -72,7 +73,7 @@ export async function updateProduct(
     return { success: true, data: updated };
   } catch (error) {
     console.error("[updateProduct]", error);
-    return { success: false, error: "Erro ao atualizar produto" };
+    return { success: false, error: formatServerActionError(error, "Erro ao atualizar produto") };
   }
 }
 
@@ -82,7 +83,7 @@ export async function deleteProduct(companyId: string, productId: string): Promi
     if (!product) return { success: false, error: "Produto não encontrado" };
     await db.product.update({ where: { id: productId }, data: { isActive: false } });
     return { success: true };
-  } catch {
-    return { success: false, error: "Erro ao excluir produto" };
+  } catch (error) {
+    return { success: false, error: formatServerActionError(error, "Erro ao excluir produto") };
   }
 }

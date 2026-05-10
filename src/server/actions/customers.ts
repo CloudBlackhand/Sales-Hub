@@ -1,6 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
+import { formatServerActionError } from "@/lib/demo-read-only";
 import { ActionResult, PaginatedResult } from "@/types";
 import { Customer } from "@/lib/prisma-types";
 import { customerSchema, type CustomerInput } from "@/lib/schemas/customers";
@@ -52,7 +53,7 @@ export async function createCustomer(
     return { success: true, data: customer };
   } catch (error) {
     console.error("[createCustomer]", error);
-    return { success: false, error: "Erro ao criar cliente" };
+    return { success: false, error: formatServerActionError(error, "Erro ao criar cliente") };
   }
 }
 
@@ -72,7 +73,7 @@ export async function updateCustomer(
     return { success: true, data: updated };
   } catch (error) {
     console.error("[updateCustomer]", error);
-    return { success: false, error: "Erro ao atualizar cliente" };
+    return { success: false, error: formatServerActionError(error, "Erro ao atualizar cliente") };
   }
 }
 
@@ -82,7 +83,7 @@ export async function deleteCustomer(companyId: string, customerId: string): Pro
     if (!customer) return { success: false, error: "Cliente não encontrado" };
     await db.customer.delete({ where: { id: customerId } });
     return { success: true };
-  } catch {
-    return { success: false, error: "Erro ao excluir cliente" };
+  } catch (error) {
+    return { success: false, error: formatServerActionError(error, "Erro ao excluir cliente") };
   }
 }

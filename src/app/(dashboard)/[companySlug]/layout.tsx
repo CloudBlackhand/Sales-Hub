@@ -1,6 +1,8 @@
 import { IdentifyOpenPanel } from "@/components/openpanel/open-panel-scripts";
 import { Sidebar } from "@/components/layout/sidebar";
 import { Header } from "@/components/layout/header";
+import { DemoReadOnlyBanner } from "@/components/layout/demo-read-only-banner";
+import { isDemoReadOnlyEnv } from "@/lib/demo-read-only";
 import { requireDashboardContext } from "@/server/dashboard/context";
 
 interface DashboardLayoutProps {
@@ -43,6 +45,7 @@ export default async function DashboardLayout({ children, params }: DashboardLay
           companies={companies}
           showSupervise={showSupervise}
         />
+        {isDemoReadOnlyEnv() ? <DemoReadOnlyBanner /> : null}
         <main className="flex min-h-0 flex-1 flex-col overflow-y-auto overflow-x-hidden bg-zinc-950">
           {children}
         </main>

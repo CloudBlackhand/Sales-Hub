@@ -1,6 +1,7 @@
 "use server";
 
 import { db } from "@/lib/db";
+import { formatServerActionError } from "@/lib/demo-read-only";
 import { slugify } from "@/lib/utils";
 import { ActionResult } from "@/types";
 import { Company, MemberRole } from "@/lib/prisma-types";
@@ -62,7 +63,7 @@ export async function createCompany(
     return { success: true, data: company };
   } catch (error) {
     console.error("[createCompany]", error);
-    return { success: false, error: "Erro ao criar empresa" };
+    return { success: false, error: formatServerActionError(error, "Erro ao criar empresa") };
   }
 }
 

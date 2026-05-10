@@ -8,6 +8,7 @@ import { Sale, SaleStatus, SaleType, CommissionType } from "@/lib/prisma-types";
 import { saleSchema, type SaleInput } from "@/lib/schemas/sales";
 import { trackOpenPanelSaleCreated, trackOpenPanelSaleStatusUpdated } from "@/lib/openpanel-server";
 import { decimalToNumber } from "@/lib/decimal-json";
+import { formatServerActionError } from "@/lib/demo-read-only";
 
 /** Venda com Decimals convertidos para number (RSC, API e cliente). */
 type SaleWithRelations = Omit<Sale, "totalAmount" | "discount"> & {
@@ -236,7 +237,7 @@ export async function createSale(
     return { success: true, data: sale };
   } catch (error) {
     console.error("[createSale]", error);
-    return { success: false, error: "Erro ao criar venda" };
+    return { success: false, error: formatServerActionError(error, "Erro ao criar venda") };
   }
 }
 
@@ -279,6 +280,6 @@ export async function updateSaleStatus(
     return { success: true };
   } catch (error) {
     console.error("[updateSaleStatus]", error);
-    return { success: false, error: "Erro ao atualizar status" };
+    return { success: false, error: formatServerActionError(error, "Erro ao atualizar status") };
   }
 }

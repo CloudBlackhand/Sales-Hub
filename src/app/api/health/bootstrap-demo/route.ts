@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { db } from "@/lib/db";
+import { runWithPrismaWriteBypass } from "@/lib/demo-read-only";
 import {
   runDemoSeed,
   DEMO_COMPANY_SLUG,
@@ -35,7 +36,7 @@ export async function POST(request: NextRequest) {
   }
 
   try {
-    await runDemoSeed(db);
+    await runWithPrismaWriteBypass(() => runDemoSeed(db));
     return NextResponse.json({
       ok: true,
       loginEmail: DEMO_LOGIN_EMAIL,
